@@ -1,15 +1,17 @@
-package com.helper.coin.api.upbit;
+package com.helper.coin.api.binance;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.helper.coin.api.ExchangeApi;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -18,23 +20,18 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-public class UpbitApi implements ExchangeApi {
-
+public class BinanceApi implements ExchangeApi {
     private String accessKey;
     private String secretKey;
     private String ipAddress;
 
-    public UpbitApi(String accessKey, String secretKey, String ipAddress){
+    public BinanceApi(String accessKey, String secretKey, String ipAddress){
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.ipAddress = ipAddress;
     }
 
-    public String getAuthenticationToken(String queryString) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    public String getAuthenticationToken(String queryString) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
         MessageDigest md = MessageDigest.getInstance("SHA-512");
         md.update(queryString.getBytes("utf8"));
@@ -75,54 +72,43 @@ public class UpbitApi implements ExchangeApi {
             httpclient.close();
         }
     }
-    /*
-    public Map<String, Double> getMinuteCandle(int unit, String coinName, String currency, int count) throws Exception{
-        Map<String, String> params = new HashMap<>();
-        params.put("market", currency+"-"+coinName);
-        params.put("count", Integer.toString(count));
-        JSONArray jsonArray = (JSONArray)new JSONParser().parse(sendGetRequest("/v1/candles/minutes/"+unit, params));
-        Map<String, Double> res = new HashMap<>();
-        JSONObject nowInform = (JSONObject) jsonArray.get(0);
-        res.put("nowVolume", (Double) nowInform.get("candle_acc_trade_volume"));
-        res.put("nowPrice", (Double) nowInform.get("trade_price"));
-        JSONObject beforeInform = (JSONObject) jsonArray.get(1);
-        res.put("beforeVolume", (Double) beforeInform.get("candle_acc_trade_volume"));
-        res.put("beforePrice", (Double) beforeInform.get("trade_price"));
-        return res;
-    }
-    */
 
     public Map<String, Double> getMinuteCandle(int unit, String coinName, String currency) throws Exception{
         Map<String, String> params = new HashMap<>();
-        params.put("market", currency+"-"+coinName);
-        params.put("count", Integer.toString(unit * 2));
-        JSONArray jsonArray = (JSONArray)new JSONParser().parse(sendGetRequest("/v1/candles/minutes/1", params));
+        params.put("symbol", coinName+currency);
+        params.put("interval", "1m");
+        params.put("limit", Integer.toString(unit * 2));
+        JSONArray jsonArray = (JSONArray)new JSONParser().parse(sendGetRequest("/api/v3/klines", params));
+        //System.out.println(jsonArray.toString());
         //System.out.println(jsonArray.toString());
         Double beforeVolume = 0.0;
         Double nowVolume = 0.0;
         for(int i=0;i<unit;i++){
-            nowVolume += (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_volume");
+            beforeVolume += Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(5)));
         }
         for(int i=unit;i<unit*2;i++){
-            beforeVolume += (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_volume");
+            nowVolume += Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(5)));
         }
         Map<String, Double> res = new HashMap<>();
         res.put("beforeVolume", beforeVolume);
         res.put("nowVolume", nowVolume);
-        res.put("beforePrice", (Double) ((JSONObject)jsonArray.get(unit)).get("trade_price"));
-        res.put("nowPrice", (Double) ((JSONObject)jsonArray.get(0)).get("trade_price"));
+        res.put("beforePrice", Double.parseDouble((String)(((JSONArray)jsonArray.get(unit-1)).get(4))));
+        res.put("nowPrice", Double.parseDouble((String)(((JSONArray)jsonArray.get(unit*2-1)).get(4))));
         return res;
     }
 
     public List<Map<String, String>> getMarketAll() throws Exception {
-        JSONArray jsonArray = (JSONArray)new JSONParser().parse(sendGetRequest("/v1/market/all", new HashMap<String, String>()));
+        JSONObject jsonObject = (JSONObject)new JSONParser().parse(sendGetRequest("/api/v3/exchangeInfo", new HashMap<String, String>()));
+        JSONArray jsonArray = (JSONArray) jsonObject.get("symbols");
+        System.out.println(jsonArray.toString().substring(0, 100));
         List<Map<String, String>> res = new ArrayList<>();
         for(int i=0;i<jsonArray.size();i++){
             Map<String, String> market = new HashMap<>();
-            String[] marketSplit = ((String)((JSONObject)jsonArray.get(i)).get("market")).split("-");
-            if (!marketSplit[0].equals("KRW")) continue;
-            market.put("name", marketSplit[1]);
-            market.put("currency", marketSplit[0]);
+            String baseAsset = (String)((JSONObject)jsonArray.get(i)).get("baseAsset");
+            String quoteAsset = (String)((JSONObject)jsonArray.get(i)).get("quoteAsset");
+            if (!quoteAsset.equals("USDT") || baseAsset.length() > 2 && baseAsset.substring(baseAsset.length()-2).equals("UP") || baseAsset.length() > 4 && baseAsset.substring(baseAsset.length()-4).equals("DOWN")) continue;
+            market.put("name", baseAsset);
+            market.put("currency", quoteAsset);
             res.add(market);
         }
         return res;

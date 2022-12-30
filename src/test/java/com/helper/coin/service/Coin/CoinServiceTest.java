@@ -1,5 +1,6 @@
 package com.helper.coin.service.Coin;
 
+import com.helper.coin.controller.dto.coin.CoinResponseDto;
 import com.helper.coin.domain.coin.Coin;
 import com.helper.coin.domain.coin.CoinRepository;
 import org.junit.Test;
@@ -27,11 +28,19 @@ public class CoinServiceTest {
     public void updateTest() throws Exception {
         coinRepository.save(Coin.builder().name("BTC").currency("KRW").exchange("upbit").build());
         List<Coin> coins = coinRepository.findAll();
-        assertThat(coins.get(0).getBeforePrice()).isNull();
+        assertThat(coins.get(0).getBeforePrice5()).isNull();
         coinService.update();
         coins = coinRepository.findAll();
-        System.out.println(coins.get(0).getNowPrice().toString());
-        assertThat(coins.get(0).getBeforePrice()).isNotNull();
+        System.out.println(coins.get(0).getNowPrice5().toString());
+        assertThat(coins.get(0).getBeforePrice5()).isNotNull();
         assertThat(coins.get(0).getModifiedDate()).isBefore(LocalDateTime.now());
+    }
+
+    @Test
+    public void insertAllTest() throws Exception {
+        coinService.insertAll();
+        List<Coin> coins = coinRepository.findAll();
+        System.out.println(coins.size());
+        assertThat(coins.size()).isGreaterThan(100);
     }
 }
