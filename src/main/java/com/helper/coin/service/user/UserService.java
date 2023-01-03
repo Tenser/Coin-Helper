@@ -26,8 +26,8 @@ public class UserService {
     @Transactional
     public UserTokenResponseDto login(UserLoginRequestDto requestDto){
         User user = userRepository.findByUserId(requestDto.getId());
-        if (user != null && user.isSamePassword(requestDto.getPassword())) return new UserTokenResponseDto("OK", jwtTokenProvider.createToken(user.getId(), new ArrayList<String>()));
-        return new UserTokenResponseDto("NO", "NO");
+        if (user != null && user.isSamePassword(requestDto.getPassword())) return new UserTokenResponseDto("OK", jwtTokenProvider.createToken(user.getId(), new ArrayList<String>()), jwtTokenProvider.createRefreshToken());
+        return new UserTokenResponseDto("NO", "NO", "NO");
     }
 
     @Transactional
@@ -62,6 +62,18 @@ public class UserService {
     public UserResponseDto findById(String id){
         User user = userRepository.findByUserId(id);
         return new UserResponseDto(user);
+    }
+
+    @Transactional
+    public UserTokenResponseDto refresh(String id, String accessToken, String refreshToken){
+        if(!jwtTokenProvider.validateToken(accessToken)){
+            if(jwtTokenProvider.validateToken(refreshToken)){
+                return new UserTokenResponseDto("OK", jwtTokenProvider.createToken(id, new ArrayList<String>()), refreshToken);
+            }else{
+                return new UserTokenResponseDto("refreshToken expired", accessToken, refreshToken);
+            }
+        }
+        return new UserTokenResponseDto("not expired", accessToken, refreshToken);
     }
 
 

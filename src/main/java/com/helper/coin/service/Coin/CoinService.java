@@ -27,6 +27,7 @@ public class CoinService {
     private final ExchangeApi binanceApi;
     private Double exchangeRate;
 
+    /*
     @Transactional
     @Scheduled(fixedDelay = 1000)
     public void update() throws Exception {
@@ -48,6 +49,34 @@ public class CoinService {
                 //System.out.println(coin.getName() + coin.getExchange());
                 coin.update(res5.get("nowPrice"), res5.get("beforePrice"), res5.get("nowVolume"), res5.get("beforeVolume"), res60.get("nowPrice"), res60.get("beforePrice"), res60.get("nowVolume"), res60.get("beforeVolume"));
             }
+        }
+        System.out.println("finish!");
+    }
+    */
+
+    @Transactional
+    @Scheduled(fixedDelay = 1000)
+    public void update() throws Exception {
+        List<Coin> upbitCoins = coinRepository.findByExchange("upbit");
+        List<Coin> binanceCoins = coinRepository.findByExchange("binance");
+
+        Map<String, Double> res5;
+        Map<String, Double> res60;
+        ExchangeRate.setExchangeRate();
+        for(int i=0;i<Math.max(upbitCoins.size(), binanceCoins.size());i++) {
+            if(upbitCoins.size() > i){
+                res5 = upbitApi.getMinuteCandle(5, upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency());
+                res60 = upbitApi.getMinuteCandle(60, upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency());
+                upbitCoins.get(i).update(res5.get("nowPrice"), res5.get("beforePrice"), res5.get("nowVolume"), res5.get("beforeVolume"), res60.get("nowPrice"), res60.get("beforePrice"), res60.get("nowVolume"), res60.get("beforeVolume"));
+                //System.out.println("upbit!");
+            }
+            if(binanceCoins.size() > i){
+                res5 = binanceApi.getMinuteCandle(5, binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency());
+                res60 = binanceApi.getMinuteCandle(60, binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency());
+                binanceCoins.get(i).update(res5.get("nowPrice"), res5.get("beforePrice"), res5.get("nowVolume"), res5.get("beforeVolume"), res60.get("nowPrice"), res60.get("beforePrice"), res60.get("nowVolume"), res60.get("beforeVolume"));
+                //System.out.println("binance!");
+            }
+            Thread.sleep(200);
         }
         System.out.println("finish!");
     }
@@ -151,6 +180,16 @@ public class CoinService {
         System.out.println(res.get(1).get("currency"));
         for(Map<String, String> market: res){
             responseDtos.add(new CoinResponseDto(coinRepository.save(Coin.builder().name(market.get("name")).currency(market.get("currency")).exchange("binance").build()), 5));
+        }
+        return responseDtos;
+    }
+
+    @Transactional
+    public List<CoinLikeResponseDto> showDetailByName(String name){
+        List<Coin> coins = coinRepository.findAllByName(name);
+        List<CoinLikeResponseDto> responseDtos = new ArrayList<>();
+        for (Coin coin: coins){
+            responseDtos.add(new CoinLikeResponseDto(coin));
         }
         return responseDtos;
     }

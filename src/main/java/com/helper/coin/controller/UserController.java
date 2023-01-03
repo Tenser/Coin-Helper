@@ -22,6 +22,11 @@ public class UserController {
         return userService.login(requestDto);
     }
 
+    @PostMapping("user/refresh/{id}")
+    public UserTokenResponseDto login(@PathVariable String id, @RequestHeader String accessToken, @RequestHeader String refreshToken){
+        return userService.refresh(id, accessToken, refreshToken);
+    }
+
     @GetMapping("/user/idCheck/{id}")
     public UserIsOkResponseDto idCheck(@PathVariable String id) { return userService.idCheck(id); }
 

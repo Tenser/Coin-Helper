@@ -27,4 +27,10 @@ public interface CoinRepository extends JpaRepository<Coin, Long> {
 
     @Query("select c from Coin c where c.name in (select c2.name from Coin c2 where c2.exchange in ('upbit', 'binance') group by c2.name having count(c2.name) = 2) order by c.exchange desc, c.name")
     List<Coin> findPremium();
+
+    @Query("select c from Coin c where c.exchange = :exchange")
+    List<Coin> findByExchange(String exchange);
+
+    @Query("select c from Coin c where c.name = :name")
+    List<Coin> findAllByName(String name);
 }

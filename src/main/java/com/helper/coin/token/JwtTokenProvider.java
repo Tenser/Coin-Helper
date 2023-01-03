@@ -23,6 +23,7 @@ public class JwtTokenProvider {
     private String secretKey = "webfirewood";
 
     private long tokenValidTime = 30 * 60 * 1000L;     // 토큰 유효시간 30분
+    private long refreshTokenValidMillisecond = 24 * 60 * 60 * 1000L;
 
     private final UserDetailsService userDetailsService;
 
@@ -44,6 +45,17 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey)  // 암호화 알고리즘과, secret 값
                 .compact();
     }
+
+    public String createRefreshToken() {
+        Date now = new Date();
+        return Jwts.builder()
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + refreshTokenValidMillisecond))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+    }
+
+
 
     // 인증 정보 조회
     public Authentication getAuthentication(String token) {

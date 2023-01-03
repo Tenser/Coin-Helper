@@ -6,6 +6,7 @@ import com.helper.coin.controller.dto.coin.CoinResponseDto;
 import com.helper.coin.domain.coin.CoinRepository;
 import com.helper.coin.service.Coin.CoinService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,5 +58,10 @@ public class CoinController {
     @GetMapping("/coin/premium")
     public List<CoinPremiumResponseDto> findPremium(){
         return coinService.findPremium();
+    }
+
+    @GetMapping("coin/detailView/{name}")
+    public List<CoinLikeResponseDto> detailView(@PathVariable String name){
+        return coinService.showDetailByName(name);
     }
 }

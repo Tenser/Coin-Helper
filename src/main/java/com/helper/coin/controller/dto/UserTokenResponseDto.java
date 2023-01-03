@@ -7,10 +7,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserTokenResponseDto {
     private String message;
-    private String token;
+    private String accessToken;
+    private String refreshToken;
 
-    public UserTokenResponseDto(String message, String token){
+    public UserTokenResponseDto(String message, String accessToken, String refreshToken){
         this.message = message;
-        this.token = token;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 }
