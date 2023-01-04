@@ -78,7 +78,7 @@ public class CoinService {
             }
             Thread.sleep(200);
         }
-        System.out.println("finish!");
+        //System.out.println("finish!");
     }
 
     @Transactional
