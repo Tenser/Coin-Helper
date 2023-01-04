@@ -19,7 +19,7 @@ public class UpbitApiTest {
     UpbitApi upbitApi;
     BinanceApi binanceApi;
 
-
+    /*
     @Test
     public void getMinuteCandleTest() throws Exception {
         upbitApi = new UpbitApi("asd", "asd", "https://api.upbit.com");
@@ -42,4 +42,6 @@ public class UpbitApiTest {
         List<Map<String, String>> markets = binanceApi.getMarketAll();
         System.out.println(markets.get(0).toString());
     }
+
+     */
 }

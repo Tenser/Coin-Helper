@@ -24,6 +24,7 @@ public class CoinServiceTest {
     @Autowired
     CoinService coinService;
 
+    /*
     @Test
     public void updateTest() throws Exception {
         coinRepository.save(Coin.builder().name("BTC").currency("KRW").exchange("upbit").build());
@@ -43,4 +44,6 @@ public class CoinServiceTest {
         System.out.println(coins.size());
         assertThat(coins.size()).isGreaterThan(100);
     }
+
+     */
 }

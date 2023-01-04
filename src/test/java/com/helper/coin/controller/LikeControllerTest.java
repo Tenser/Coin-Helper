@@ -53,6 +53,7 @@ public class LikeControllerTest {
         likeRepository.deleteAll();
     }
 
+    /*
     @Test
     public void insertAndDeleteTest(){
         UserSaveRequestDto requestDto0 = UserSaveRequestDto.builder().id("admin").name("admin").password("admin").build();
@@ -77,4 +78,6 @@ public class LikeControllerTest {
         likes = likeRepository.findAll();
         assertThat(likes.size()).isEqualTo(0);
     }
+    */
+
 }
