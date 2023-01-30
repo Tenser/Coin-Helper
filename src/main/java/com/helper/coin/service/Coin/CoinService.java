@@ -102,14 +102,14 @@ public class CoinService {
     }
 
     @Transactional
-    public List<CoinResponseDto> findAllOrderByVolumeUp(int unit){
+    public List<CoinResponseDto> findAllOrderByVolumeUp(int unit, String currency, String exchange){
         List<Coin> coins;
         if (unit == 5){
-            coins = coinRepository.findAllOrderByVolumeUp5();
+            coins = coinRepository.findAllOrderByVolumeUp5(currency, exchange);
         }else if (unit == 60){
-            coins = coinRepository.findAllOrderByVolumeUp60();
+            coins = coinRepository.findAllOrderByVolumeUp60(currency, exchange);
         }else{
-            coins = coinRepository.findAllOrderByVolumeUp5();
+            coins = coinRepository.findAllOrderByVolumeUp5(currency, exchange);
         }
         List<CoinResponseDto> responseDtos = new ArrayList<>();
         for (Coin coin: coins){
@@ -120,14 +120,14 @@ public class CoinService {
     }
 
     @Transactional
-    public List<CoinResponseDto> findAllOrderByPriceUp(int unit){
+    public List<CoinResponseDto> findAllOrderByPriceUp(int unit, String currency, String exchange){
         List<Coin> coins;
         if (unit == 5){
-            coins = coinRepository.findAllOrderByPriceUp5();
+            coins = coinRepository.findAllOrderByPriceUp5(currency, exchange);
         }else if (unit == 60){
-            coins = coinRepository.findAllOrderByPriceUp60();
+            coins = coinRepository.findAllOrderByPriceUp60(currency, exchange);
         }else{
-            coins = coinRepository.findAllOrderByPriceUp5();
+            coins = coinRepository.findAllOrderByPriceUp5(currency, exchange);
         }
         List<CoinResponseDto> responseDtos = new ArrayList<>();
         for (Coin coin: coins){

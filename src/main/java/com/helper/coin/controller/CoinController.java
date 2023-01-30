@@ -24,14 +24,14 @@ public class CoinController {
         return coinService.findAll();
     }
 
-    @GetMapping("/coin/volume/ranking/{unit}")
-    public List<CoinResponseDto> findAllOrderByVolumeUp(@PathVariable int unit){
-        return coinService.findAllOrderByVolumeUp(unit);
+    @GetMapping("/coin/volume/ranking/{unit}/{currency}/{exchange}")
+    public List<CoinResponseDto> findAllOrderByVolumeUp(@PathVariable int unit, @PathVariable String currency, @PathVariable String exchange){
+        return coinService.findAllOrderByVolumeUp(unit, currency, exchange);
     }
 
-    @GetMapping("/coin/price/ranking/{unit}")
-    public List<CoinResponseDto> findAllOrderByPriceUp(@PathVariable int unit){
-        return coinService.findAllOrderByPriceUp(unit);
+    @GetMapping("/coin/price/ranking/{unit}/{currency}/{exchange}")
+    public List<CoinResponseDto> findAllOrderByPriceUp(@PathVariable int unit, @PathVariable String currency, @PathVariable String exchange){
+        return coinService.findAllOrderByPriceUp(unit, currency, exchange);
     }
 
 

@@ -10,17 +10,17 @@ public interface CoinRepository extends JpaRepository<Coin, Long> {
     @Query("select c from Coin c where c.name like %:name%")
     List<Coin> findByName(String name);
 
-    @Query("select c from Coin c where c.beforeVolume5 > 0 order by c.nowVolume5 / c.beforeVolume5 desc")
-    List<Coin> findAllOrderByVolumeUp5();
+    @Query("select c from Coin c where c.beforeVolume5 > 0 and c.currency = :currency and c.exchange = :exchange order by c.nowVolume5 / c.beforeVolume5 desc")
+    List<Coin> findAllOrderByVolumeUp5(String currency, String exchange);
 
-    @Query("select c from Coin c where c.beforeVolume60 > 0 order by c.nowVolume60 / c.beforeVolume60 desc")
-    List<Coin> findAllOrderByVolumeUp60();
+    @Query("select c from Coin c where c.beforeVolume60 > 0 and c.currency = :currency and c.exchange = :exchange order by c.nowVolume60 / c.beforeVolume60 desc")
+    List<Coin> findAllOrderByVolumeUp60(String currency, String exchange);
 
-    @Query("select c from Coin c where c.beforePrice5 > 0 order by c.nowPrice5 / c.beforePrice5 desc")
-    List<Coin> findAllOrderByPriceUp5();
+    @Query("select c from Coin c where c.beforePrice5 > 0 and c.currency = :currency and c.exchange = :exchange order by c.nowPrice5 / c.beforePrice5 desc")
+    List<Coin> findAllOrderByPriceUp5(String currency, String exchange);
 
-    @Query("select c from Coin c where c.beforePrice60 > 0 order by c.nowPrice60 / c.beforePrice60 desc")
-    List<Coin> findAllOrderByPriceUp60();
+    @Query("select c from Coin c where c.beforePrice60 > 0 and c.currency = :currency and c.exchange = :exchange order by c.nowPrice60 / c.beforePrice60 desc")
+    List<Coin> findAllOrderByPriceUp60(String currency, String exchange);
 
     @Query("select c from Coin c left join Like l on c.id = l.coinId where l.userId=:userId")
     List<Coin> findByUserId(String userId);
