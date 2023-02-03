@@ -60,6 +60,14 @@ public class User implements UserDetails {
         this.secretKey = secretKey;
     }
 
+    public void on(){
+        this.isOn = 1;
+    }
+
+    public void off(){
+        this.isOn = 0;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

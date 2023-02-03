@@ -22,6 +22,12 @@ public class UserController {
         return userService.login(requestDto);
     }
 
+    @PostMapping("/user/logout")
+    public UserIsOkResponseDto logout(@RequestBody UserLoginRequestDto requestDto) {
+        //System.out.println(requestDto.getId());
+        return userService.logout(requestDto);
+    }
+
     @PostMapping("user/refresh/{id}")
     public UserTokenResponseDto login(@PathVariable String id, @RequestHeader String accessToken, @RequestHeader String refreshToken){
         return userService.refresh(id, accessToken, refreshToken);
