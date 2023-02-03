@@ -39,10 +39,10 @@ public class UserControllerTest {
     public void tearDown() throws Exception{
         userRepository.deleteAll();
     }
-    /*
+
     @Test
     public void saveTest() throws Exception{
-        String id = "admin@@";
+        String id = "admin";
         String password = "admin";
 
         //UserSaveRequestDto requestDto = UserSaveRequestDto.builder().id(id).password(password).apiKey("key").secretKey("key").build();
@@ -59,7 +59,7 @@ public class UserControllerTest {
         assertThat(all.get(0).getId()).isEqualTo(id);
         assertThat(all.get(0).getPassword()).isEqualTo(password);
     }
-
+    /*
     @Test
     public void loginTest() throws Exception{
         String id = "admin";

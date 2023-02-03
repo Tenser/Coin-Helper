@@ -32,6 +32,8 @@ public class User implements UserDetails {
 
     private String secretKey;
 
+    private int isOn;
+
 
     @Builder
     public User(String id, String name, String password, String apiKey, String secretKey){
@@ -40,6 +42,7 @@ public class User implements UserDetails {
         this.password = password;
         this.apiKey = apiKey;
         this.secretKey = secretKey;
+        this.isOn = 0;
     }
 
     public boolean isSamePassword(String password){

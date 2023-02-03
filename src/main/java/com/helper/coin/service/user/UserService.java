@@ -26,7 +26,7 @@ public class UserService {
     @Transactional
     public UserTokenResponseDto login(UserLoginRequestDto requestDto){
         User user = userRepository.findByUserId(requestDto.getId());
-        if (user != null && user.isSamePassword(requestDto.getPassword())) return new UserTokenResponseDto("OK", jwtTokenProvider.createToken(user.getId(), new ArrayList<String>()), jwtTokenProvider.createRefreshToken());
+        if (user != null && user.getIsOn() == 1 && user.isSamePassword(requestDto.getPassword())) return new UserTokenResponseDto("OK", jwtTokenProvider.createToken(user.getId(), new ArrayList<String>()), jwtTokenProvider.createRefreshToken());
         return new UserTokenResponseDto("NO", "NO", "NO");
     }
 
