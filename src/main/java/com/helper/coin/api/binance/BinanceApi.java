@@ -3,6 +3,7 @@ package com.helper.coin.api.binance;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.helper.coin.api.ExchangeApi;
+import com.helper.coin.api.ExchangeRate;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -83,17 +84,26 @@ public class BinanceApi implements ExchangeApi {
         //System.out.println(jsonArray.toString());
         Double beforeVolume = 0.0;
         Double nowVolume = 0.0;
+        Double beforeAmount = 0.0;
+        Double nowAmount = 0.0;
         for(int i=0;i<unit;i++){
-            beforeVolume += Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(5)));
+            Double volume = Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(5)));
+            beforeVolume += volume;
+            beforeAmount += volume * Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(4))) * ExchangeRate.exchangeRate;
         }
         for(int i=unit;i<unit*2;i++){
-            nowVolume += Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(5)));
+            Double volume = Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(5)));
+            nowVolume += volume;
+            nowAmount += volume * Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(4))) * ExchangeRate.exchangeRate;
+
         }
         Map<String, Double> res = new HashMap<>();
         res.put("beforeVolume", beforeVolume);
         res.put("nowVolume", nowVolume);
         res.put("beforePrice", Double.parseDouble((String)(((JSONArray)jsonArray.get(unit-1)).get(4))));
         res.put("nowPrice", Double.parseDouble((String)(((JSONArray)jsonArray.get(unit*2-1)).get(4))));
+        res.put("beforeAmount", beforeAmount);
+        res.put("nowAmount", nowAmount);
         return res;
     }
 

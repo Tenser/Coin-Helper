@@ -3,6 +3,8 @@ package com.helper.coin.api.upbit;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.helper.coin.api.ExchangeApi;
+import com.helper.coin.api.ExchangeRate;
+import com.helper.coin.api.binance.BinanceApi;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -100,17 +102,25 @@ public class UpbitApi implements ExchangeApi {
         //System.out.println(jsonArray.toString());
         Double beforeVolume = 0.0;
         Double nowVolume = 0.0;
+        Double beforeAmount = 0.0;
+        Double nowAmount = 0.0;
         for(int i=0;i<unit;i++){
-            nowVolume += (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_volume");
+            Double volume = (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_volume");
+            nowVolume += volume;
+            nowAmount += volume * (Double) ((JSONObject)jsonArray.get(i)).get("trade_price");
         }
         for(int i=unit;i<unit*2;i++){
-            beforeVolume += (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_volume");
+            Double volume = (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_volume");
+            beforeVolume += volume;
+            beforeAmount += volume * (Double) ((JSONObject)jsonArray.get(i)).get("trade_price");
         }
         Map<String, Double> res = new HashMap<>();
         res.put("beforeVolume", beforeVolume);
         res.put("nowVolume", nowVolume);
         res.put("beforePrice", (Double) ((JSONObject)jsonArray.get(unit)).get("trade_price"));
         res.put("nowPrice", (Double) ((JSONObject)jsonArray.get(0)).get("trade_price"));
+        res.put("beforeAmount", beforeAmount);
+        res.put("nowAmount", nowAmount);
         return res;
     }
 

@@ -67,13 +67,13 @@ public class CoinService {
             if(upbitCoins.size() > i){
                 res5 = upbitApi.getMinuteCandle(5, upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency());
                 res60 = upbitApi.getMinuteCandle(60, upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency());
-                upbitCoins.get(i).update(res5.get("nowPrice"), res5.get("beforePrice"), res5.get("nowVolume"), res5.get("beforeVolume"), res60.get("nowPrice"), res60.get("beforePrice"), res60.get("nowVolume"), res60.get("beforeVolume"));
+                upbitCoins.get(i).update(res5.get("nowPrice"), res5.get("beforePrice"), res5.get("nowVolume"), res5.get("beforeVolume"), res60.get("nowPrice"), res60.get("beforePrice"), res60.get("nowVolume"), res60.get("beforeVolume"), res5.get("nowAmount"), res5.get("beforeAmount"), res60.get("nowAmount"), res60.get("beforeAmount"));
                 //System.out.println("upbit!");
             }
             if(binanceCoins.size() > i){
                 res5 = binanceApi.getMinuteCandle(5, binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency());
                 res60 = binanceApi.getMinuteCandle(60, binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency());
-                binanceCoins.get(i).update(res5.get("nowPrice"), res5.get("beforePrice"), res5.get("nowVolume"), res5.get("beforeVolume"), res60.get("nowPrice"), res60.get("beforePrice"), res60.get("nowVolume"), res60.get("beforeVolume"));
+                binanceCoins.get(i).update(res5.get("nowPrice"), res5.get("beforePrice"), res5.get("nowVolume"), res5.get("beforeVolume"), res60.get("nowPrice"), res60.get("beforePrice"), res60.get("nowVolume"), res60.get("beforeVolume"), res5.get("nowAmount"), res5.get("beforeAmount"), res60.get("nowAmount"), res60.get("beforeAmount"));
                 //System.out.println("binance!");
             }
             Thread.sleep(200);

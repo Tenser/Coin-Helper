@@ -33,6 +33,10 @@ public class Coin extends BaseTimeEntity {
 
     private Double beforeVolume5;
 
+    private Double nowAmount5;
+
+    private Double beforeAmount5;
+
     private Double nowPrice60;
 
     private Double beforePrice60;
@@ -40,6 +44,10 @@ public class Coin extends BaseTimeEntity {
     private Double nowVolume60;
 
     private Double beforeVolume60;
+
+    private Double nowAmount60;
+
+    private Double beforeAmount60;
 
 
     @Builder
@@ -49,7 +57,7 @@ public class Coin extends BaseTimeEntity {
         this.exchange = exchange;
     }
 
-    public void update(Double nowPrice5, Double beforePrice5, Double nowVolume5, Double beforeVolume5, Double nowPrice60, Double beforePrice60, Double nowVolume60, Double beforeVolume60){
+    public void update(Double nowPrice5, Double beforePrice5, Double nowVolume5, Double beforeVolume5, Double nowPrice60, Double beforePrice60, Double nowVolume60, Double beforeVolume60, Double nowAmount5, Double beforeAmount5, Double nowAmount60, Double beforeAmount60){
         this.nowPrice5 = nowPrice5;
         this.beforePrice5 = beforePrice5;
         this.nowVolume5 = nowVolume5;
@@ -58,6 +66,10 @@ public class Coin extends BaseTimeEntity {
         this.beforePrice60 = beforePrice60;
         this.nowVolume60 = nowVolume60;
         this.beforeVolume60 = beforeVolume60;
+        this.nowAmount5 = nowAmount5;
+        this.beforeAmount5 = beforeAmount5;
+        this.nowAmount60 = nowAmount60;
+        this.beforeAmount60 = beforeAmount60;
     }
 
 }

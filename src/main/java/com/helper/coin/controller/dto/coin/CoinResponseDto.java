@@ -29,6 +29,10 @@ public class CoinResponseDto {
 
     private Double beforeVolume;
 
+    private Double nowAmount;
+
+    private Double beforeAmount;
+
 
     public CoinResponseDto(Coin coin, int unit){
         this.id = coin.getId();
@@ -40,11 +44,15 @@ public class CoinResponseDto {
             this.beforePrice = coin.getBeforePrice5();
             this.nowVolume = coin.getNowVolume5();
             this.beforeVolume = coin.getBeforeVolume5();
+            this.nowAmount = coin.getNowAmount5();
+            this.beforeAmount = coin.getBeforeAmount5();
         }else if(unit == 60){
             this.nowPrice = coin.getNowPrice60();
             this.beforePrice = coin.getBeforePrice60();
             this.nowVolume = coin.getNowVolume60();
             this.beforeVolume = coin.getBeforeVolume60();
+            this.nowAmount = coin.getNowAmount60();
+            this.beforeAmount = coin.getBeforeAmount60();
         }
 
     }
