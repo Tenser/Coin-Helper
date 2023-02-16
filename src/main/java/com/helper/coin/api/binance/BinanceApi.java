@@ -89,13 +89,12 @@ public class BinanceApi implements ExchangeApi {
         for(int i=0;i<unit;i++){
             Double volume = Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(5)));
             beforeVolume += volume;
-            beforeAmount += volume * Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(4))) * ExchangeRate.exchangeRate;
+            beforeAmount += Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
         }
         for(int i=unit;i<unit*2;i++){
             Double volume = Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(5)));
             nowVolume += volume;
-            nowAmount += volume * Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(4))) * ExchangeRate.exchangeRate;
-
+            nowAmount += Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
         }
         Map<String, Double> res = new HashMap<>();
         res.put("beforeVolume", beforeVolume);
