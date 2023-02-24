@@ -46,4 +46,13 @@ public class CoinServiceTest {
     }
 
      */
+
+    @Test
+    public void insertAllTest() throws Exception {
+        coinService.insertAll();
+        List<Coin> coins = coinRepository.findAll();
+        System.out.println(coins.size());
+        assertThat(coins.size()).isGreaterThan(100);
+        assertThat(coins.get(0).getCreatedDate()).isBefore(LocalDateTime.now());
+    }
 }

@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
@@ -33,6 +34,10 @@ public class CoinResponseDto {
 
     private Double beforeAmount;
 
+    private LocalDateTime createdDate;
+
+    private LocalDateTime modifiedDate;
+
 
     public CoinResponseDto(Coin coin, int unit){
         this.id = coin.getId();
@@ -54,6 +59,8 @@ public class CoinResponseDto {
             this.nowAmount = coin.getNowAmount60();
             this.beforeAmount = coin.getBeforeAmount60();
         }
+        this.createdDate = coin.getCreatedDate();
+        this.modifiedDate = coin.getModifiedDate();
 
     }
 }
