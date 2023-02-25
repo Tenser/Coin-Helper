@@ -153,8 +153,8 @@ public class CoinService {
         int n = coins.size()/2;
         for(int i=0;i<n;i++){
             coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 5).getNowPrice();
-            Double priceKorea = coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 1).getNowPrice();
-            Double priceAmerica = coinInfoRepository.findByCoinIdAndUnit(coins.get(i+n).getId(), 1).getNowPrice();
+            Double priceKorea = coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 5).getNowPrice();
+            Double priceAmerica = coinInfoRepository.findByCoinIdAndUnit(coins.get(i+n).getId(), 5).getNowPrice();
             Double premium = priceKorea / (priceAmerica * ExchangeRate.exchangeRate);
             premium = Math.round(premium * 10000) / 10000.0;
             responseDtos.add(new CoinPremiumResponseDto(coins.get(i).getName(), priceKorea, priceAmerica, premium));
@@ -195,6 +195,13 @@ public class CoinService {
             responseDtos.add(new CoinLikeResponseDto(coin));
         }
         return responseDtos;
+    }
+
+    @Transactional
+    public List<CoinResponseDto> deleteAll(){
+        coinRepository.deleteAll();
+        coinInfoRepository.deleteAll();
+        return new ArrayList<CoinResponseDto>();
     }
 
 }

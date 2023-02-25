@@ -46,7 +46,7 @@ public class CoinController {
         return coinService.insertAll();
     }
 
-    @GetMapping("coin/search/{query}")
+    @GetMapping("/coin/search/{query}")
     public List<CoinLikeResponseDto> search(@PathVariable String query){
         return coinService.findByName(query);
     }
@@ -61,8 +61,13 @@ public class CoinController {
         return coinService.findPremium();
     }
 
-    @GetMapping("coin/detailView/{name}")
+    @GetMapping("/coin/detailView/{name}")
     public List<CoinLikeResponseDto> detailView(@PathVariable String name){
         return coinService.showDetailByName(name);
+    }
+
+    @GetMapping("/coin/deleteAll")
+    public List<CoinResponseDto> deleteAll(){
+        return coinService.deleteAll();
     }
 }
