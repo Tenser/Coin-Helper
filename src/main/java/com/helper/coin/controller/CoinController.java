@@ -2,6 +2,7 @@ package com.helper.coin.controller;
 
 import com.helper.coin.controller.dto.coin.CoinLikeResponseDto;
 import com.helper.coin.controller.dto.coin.CoinPremiumResponseDto;
+import com.helper.coin.controller.dto.coin.CoinRankingResponseDto;
 import com.helper.coin.controller.dto.coin.CoinResponseDto;
 import com.helper.coin.domain.coin.CoinRepository;
 import com.helper.coin.service.Coin.CoinService;
@@ -25,12 +26,12 @@ public class CoinController {
     }
 
     @GetMapping("/coin/volume/ranking/{unit}/{currency}/{exchange}")
-    public List<CoinResponseDto> findAllOrderByVolumeUp(@PathVariable int unit, @PathVariable String currency, @PathVariable String exchange){
+    public List<CoinRankingResponseDto> findAllOrderByVolumeUp(@PathVariable int unit, @PathVariable String currency, @PathVariable String exchange){
         return coinService.findAllOrderByVolumeUp(unit, currency, exchange);
     }
 
     @GetMapping("/coin/price/ranking/{unit}/{currency}/{exchange}")
-    public List<CoinResponseDto> findAllOrderByPriceUp(@PathVariable int unit, @PathVariable String currency, @PathVariable String exchange){
+    public List<CoinRankingResponseDto> findAllOrderByPriceUp(@PathVariable int unit, @PathVariable String currency, @PathVariable String exchange){
         return coinService.findAllOrderByPriceUp(unit, currency, exchange);
     }
 

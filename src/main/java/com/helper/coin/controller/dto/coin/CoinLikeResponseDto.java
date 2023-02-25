@@ -36,13 +36,5 @@ public class CoinLikeResponseDto {
         this.name = coin.getName();
         this.currency = coin.getCurrency();
         this.exchange = coin.getExchange();
-        this.nowPrice5 = coin.getNowPrice5();
-        this.beforePrice5 = coin.getBeforePrice5();
-        this.nowVolume5 = coin.getNowVolume5();
-        this.beforeVolume5 = coin.getBeforeVolume5();
-        this.nowPrice60 = coin.getNowPrice60();
-        this.beforePrice60 = coin.getBeforePrice60();
-        this.nowVolume60 = coin.getNowVolume60();
-        this.beforeVolume60 = coin.getBeforeVolume60();
     }
 }

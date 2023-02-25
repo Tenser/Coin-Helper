@@ -2,6 +2,8 @@ package com.helper.coin.service.Coin;
 
 import com.helper.coin.controller.dto.coin.CoinResponseDto;
 import com.helper.coin.domain.coin.Coin;
+import com.helper.coin.domain.coin.CoinInfo;
+import com.helper.coin.domain.coin.CoinInfoRepository;
 import com.helper.coin.domain.coin.CoinRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +22,9 @@ public class CoinServiceTest {
 
     @Autowired
     CoinRepository coinRepository;
+
+    @Autowired
+    CoinInfoRepository coinInfoRepository;
 
     @Autowired
     CoinService coinService;
@@ -45,14 +50,18 @@ public class CoinServiceTest {
         assertThat(coins.size()).isGreaterThan(100);
     }
 
-     */
+
 
     @Test
     public void insertAllTest() throws Exception {
         coinService.insertAll();
         List<Coin> coins = coinRepository.findAll();
+        List<CoinInfo> coinInfos = coinInfoRepository.findAll();
         System.out.println(coins.size());
         assertThat(coins.size()).isGreaterThan(100);
         assertThat(coins.get(0).getCreatedDate()).isBefore(LocalDateTime.now());
+        assertThat(coinInfos.size()).isEqualTo(coins.size() * 4);
     }
+    */
+
 }

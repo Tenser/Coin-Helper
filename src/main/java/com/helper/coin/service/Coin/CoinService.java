@@ -5,8 +5,11 @@ import com.helper.coin.api.ExchangeRate;
 import com.helper.coin.api.upbit.UpbitApi;
 import com.helper.coin.controller.dto.coin.CoinLikeResponseDto;
 import com.helper.coin.controller.dto.coin.CoinPremiumResponseDto;
+import com.helper.coin.controller.dto.coin.CoinRankingResponseDto;
 import com.helper.coin.controller.dto.coin.CoinResponseDto;
 import com.helper.coin.domain.coin.Coin;
+import com.helper.coin.domain.coin.CoinInfo;
+import com.helper.coin.domain.coin.CoinInfoRepository;
 import com.helper.coin.domain.coin.CoinRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +26,11 @@ import java.util.Map;
 public class CoinService {
 
     private final CoinRepository coinRepository;
+    private final CoinInfoRepository coinInfoRepository;
     private final ExchangeApi upbitApi;
     private final ExchangeApi binanceApi;
     private Double exchangeRate;
+    int[] units = {1, 5, 60};
 
     /*
     @Transactional
@@ -60,21 +65,22 @@ public class CoinService {
         List<Coin> upbitCoins = coinRepository.findByExchange("upbit");
         List<Coin> binanceCoins = coinRepository.findByExchange("binance");
 
-        Map<String, Double> res5;
-        Map<String, Double> res60;
+        Map<String, Double> res;
         ExchangeRate.setExchangeRate();
         for(int i=0;i<Math.max(upbitCoins.size(), binanceCoins.size());i++) {
             if(upbitCoins.size() > i){
-                res5 = upbitApi.getMinuteCandle(5, upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency());
-                res60 = upbitApi.getMinuteCandle(60, upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency());
-                upbitCoins.get(i).update(res5.get("nowPrice"), res5.get("beforePrice"), res5.get("nowVolume"), res5.get("beforeVolume"), res60.get("nowPrice"), res60.get("beforePrice"), res60.get("nowVolume"), res60.get("beforeVolume"), res5.get("nowAmount"), res5.get("beforeAmount"), res60.get("nowAmount"), res60.get("beforeAmount"));
-                //System.out.println("upbit!");
+                Long coinId = upbitCoins.get(i).getId();
+                for(int unit: units){
+                    res = upbitApi.getMinuteCandle(unit, upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency());
+                    coinInfoRepository.findByCoinIdAndUnit(coinId, unit).update(res.get("nowVolume"), res.get("beforeVolume"), res.get("nowPrice"), res.get("beforePrice"), res.get("nowAmount"), res.get("beforeAmount"));
+                }
             }
             if(binanceCoins.size() > i){
-                res5 = binanceApi.getMinuteCandle(5, binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency());
-                res60 = binanceApi.getMinuteCandle(60, binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency());
-                binanceCoins.get(i).update(res5.get("nowPrice"), res5.get("beforePrice"), res5.get("nowVolume"), res5.get("beforeVolume"), res60.get("nowPrice"), res60.get("beforePrice"), res60.get("nowVolume"), res60.get("beforeVolume"), res5.get("nowAmount"), res5.get("beforeAmount"), res60.get("nowAmount"), res60.get("beforeAmount"));
-                //System.out.println("binance!");
+                Long coinId = binanceCoins.get(i).getId();
+                for(int unit: units){
+                    res = binanceApi.getMinuteCandle(unit, binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency());
+                    coinInfoRepository.findByCoinIdAndUnit(coinId, unit).update(res.get("nowVolume"), res.get("beforeVolume"), res.get("nowPrice"), res.get("beforePrice"), res.get("nowAmount"), res.get("beforeAmount"));
+                }
             }
             Thread.sleep(200);
         }
@@ -102,44 +108,30 @@ public class CoinService {
     }
 
     @Transactional
-    public List<CoinResponseDto> findAllOrderByVolumeUp(int unit, String currency, String exchange){
-        List<Coin> coins;
-        if (unit == 5){
-            coins = coinRepository.findAllOrderByVolumeUp5(currency, exchange);
-        }else if (unit == 60){
-            coins = coinRepository.findAllOrderByVolumeUp60(currency, exchange);
-        }else{
-            coins = coinRepository.findAllOrderByVolumeUp5(currency, exchange);
-        }
-        List<CoinResponseDto> responseDtos = new ArrayList<>();
-        for (Coin coin: coins){
-            //System.out.println(coin.getNowPrice());
-            responseDtos.add(new CoinResponseDto(coin, unit));
+    public List<CoinRankingResponseDto> findAllOrderByVolumeUp(int unit, String currency, String exchange){
+        List<CoinInfo> coinInfos = coinInfoRepository.findOrderByVolumeUp(currency, exchange, unit);
+        List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
+        for (CoinInfo coinInfo: coinInfos){
+            Coin coin = coinRepository.findById2(coinInfo.getCoinId());
+            responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
         }
         return responseDtos;
     }
 
     @Transactional
-    public List<CoinResponseDto> findAllOrderByPriceUp(int unit, String currency, String exchange){
-        List<Coin> coins;
-        if (unit == 5){
-            coins = coinRepository.findAllOrderByPriceUp5(currency, exchange);
-        }else if (unit == 60){
-            coins = coinRepository.findAllOrderByPriceUp60(currency, exchange);
-        }else{
-            coins = coinRepository.findAllOrderByPriceUp5(currency, exchange);
-        }
-        List<CoinResponseDto> responseDtos = new ArrayList<>();
-        for (Coin coin: coins){
-            //System.out.println(coin.getNowPrice());
-            responseDtos.add(new CoinResponseDto(coin, unit));
+    public List<CoinRankingResponseDto> findAllOrderByPriceUp(int unit, String currency, String exchange){
+        List<CoinInfo> coinInfos = coinInfoRepository.findOrderByPriceUp(currency, exchange, unit);
+        List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
+        for (CoinInfo coinInfo: coinInfos){
+            Coin coin = coinRepository.findById2(coinInfo.getCoinId());
+            responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
         }
         return responseDtos;
     }
 
     @Transactional
     public CoinResponseDto insert(String name){
-        return new CoinResponseDto(coinRepository.save(Coin.builder().name(name).currency("KRW").exchange("upbit").build()), 5);
+        return new CoinResponseDto(coinRepository.save(Coin.builder().name(name).currency("KRW").exchange("upbit").build()));
     }
 
 
@@ -160,8 +152,9 @@ public class CoinService {
         List<CoinPremiumResponseDto> responseDtos = new ArrayList<>();
         int n = coins.size()/2;
         for(int i=0;i<n;i++){
-            Double priceKorea = coins.get(i).getNowPrice5();
-            Double priceAmerica = coins.get(i+n).getNowPrice5();
+            coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 1).getNowPrice();
+            Double priceKorea = coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 1).getNowPrice();
+            Double priceAmerica = coinInfoRepository.findByCoinIdAndUnit(coins.get(i+n).getId(), 1).getNowPrice();
             Double premium = priceKorea / (priceAmerica * ExchangeRate.exchangeRate);
             premium = Math.round(premium * 10000) / 10000.0;
             responseDtos.add(new CoinPremiumResponseDto(coins.get(i).getName(), priceKorea, priceAmerica, premium));
@@ -172,15 +165,24 @@ public class CoinService {
     @Transactional
     public List<CoinResponseDto> insertAll() throws Exception {
         coinRepository.deleteAll();
+        coinInfoRepository.deleteAll();
         List<CoinResponseDto> responseDtos = new ArrayList<>();
         List<Map<String, String>> res = upbitApi.getMarketAll();
         for(Map<String, String> market: res){
-            responseDtos.add(new CoinResponseDto(coinRepository.save(Coin.builder().name(market.get("name")).currency(market.get("currency")).exchange("upbit").build()), 5));
+            Coin coin = coinRepository.save(Coin.builder().name(market.get("name")).currency(market.get("currency")).exchange("upbit").build());
+            responseDtos.add(new CoinResponseDto(coin));
+            for(int unit: units){
+                coinInfoRepository.save(CoinInfo.builder().coinId(coin.getId()).unit(unit).build());
+            }
         }
         res = binanceApi.getMarketAll().subList(0, 200);
         System.out.println(res.get(1).get("currency"));
-        for(Map<String, String> market: res){
-            responseDtos.add(new CoinResponseDto(coinRepository.save(Coin.builder().name(market.get("name")).currency(market.get("currency")).exchange("binance").build()), 5));
+        for(Map<String, String> market: res) {
+            Coin coin = coinRepository.save(Coin.builder().name(market.get("name")).currency(market.get("currency")).exchange("binance").build());
+            responseDtos.add(new CoinResponseDto(coin));
+            for (int unit : units) {
+                coinInfoRepository.save(CoinInfo.builder().coinId(coin.getId()).unit(unit).build());
+            }
         }
         return responseDtos;
     }
