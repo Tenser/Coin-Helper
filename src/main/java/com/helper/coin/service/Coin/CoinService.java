@@ -57,7 +57,7 @@ public class CoinService {
         }
         System.out.println("finish!");
     }
-
+    */
 
     @Transactional
     @Scheduled(fixedDelay = 1000)
@@ -86,7 +86,7 @@ public class CoinService {
         }
         //System.out.println("finish!");
     }
-    */
+
 
 
     @Transactional
