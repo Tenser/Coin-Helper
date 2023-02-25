@@ -163,7 +163,7 @@ public class CoinService {
             Double priceKorea = coins.get(i).getNowPrice5();
             Double priceAmerica = coins.get(i+n).getNowPrice5();
             Double premium = priceKorea / (priceAmerica * ExchangeRate.exchangeRate);
-            premium = Math.round(premium * 100) / 100.0;
+            premium = Math.round(premium * 10000) / 10000.0;
             responseDtos.add(new CoinPremiumResponseDto(coins.get(i).getName(), priceKorea, priceAmerica, premium));
         }
         return responseDtos;
