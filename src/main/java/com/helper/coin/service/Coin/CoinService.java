@@ -30,7 +30,7 @@ public class CoinService {
     private final ExchangeApi upbitApi;
     private final ExchangeApi binanceApi;
     private Double exchangeRate;
-    int[] units = {1, 5, 60};
+    int[] units = {5, 30, 60, 120, 240};
 
     /*
     @Transactional

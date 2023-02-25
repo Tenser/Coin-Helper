@@ -97,19 +97,19 @@ public class UpbitApi implements ExchangeApi {
     public Map<String, Double> getMinuteCandle(int unit, String coinName, String currency) throws Exception{
         Map<String, String> params = new HashMap<>();
         params.put("market", currency+"-"+coinName);
-        params.put("count", Integer.toString(unit * 2));
-        JSONArray jsonArray = (JSONArray)new JSONParser().parse(sendGetRequest("/v1/candles/minutes/1", params));
+        params.put("count", Integer.toString(unit * 2 / 5));
+        JSONArray jsonArray = (JSONArray)new JSONParser().parse(sendGetRequest("/v1/candles/minutes/5", params));
         //System.out.println(jsonArray.toString());
         Double beforeVolume = 0.0;
         Double nowVolume = 0.0;
         Double beforeAmount = 0.0;
         Double nowAmount = 0.0;
-        for(int i=0;i<unit;i++){
+        for(int i=0;i<unit/5;i++){
             Double volume = (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_volume");
             nowVolume += volume;
             nowAmount += (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_price");
         }
-        for(int i=unit;i<unit*2;i++){
+        for(int i=unit/5;i<unit*2/5;i++){
             Double volume = (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_volume");
             beforeVolume += volume;
             beforeAmount += (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_price");
@@ -117,7 +117,7 @@ public class UpbitApi implements ExchangeApi {
         Map<String, Double> res = new HashMap<>();
         res.put("beforeVolume", Math.round(beforeVolume * 100) / 100.0);
         res.put("nowVolume", Math.round(nowVolume * 100) / 100.0);
-        res.put("beforePrice", (Double) ((JSONObject)jsonArray.get(unit)).get("trade_price"));
+        res.put("beforePrice", (Double) ((JSONObject)jsonArray.get(unit/5)).get("trade_price"));
         res.put("nowPrice", (Double) ((JSONObject)jsonArray.get(0)).get("trade_price"));
         res.put("beforeAmount", Math.round(beforeAmount * 100) / 100.0);
         res.put("nowAmount", Math.round(nowAmount * 100) / 100.0);
