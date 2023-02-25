@@ -152,7 +152,7 @@ public class CoinService {
         List<CoinPremiumResponseDto> responseDtos = new ArrayList<>();
         int n = coins.size()/2;
         for(int i=0;i<n;i++){
-            coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 1).getNowPrice();
+            coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 5).getNowPrice();
             Double priceKorea = coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 1).getNowPrice();
             Double priceAmerica = coinInfoRepository.findByCoinIdAndUnit(coins.get(i+n).getId(), 1).getNowPrice();
             Double premium = priceKorea / (priceAmerica * ExchangeRate.exchangeRate);
