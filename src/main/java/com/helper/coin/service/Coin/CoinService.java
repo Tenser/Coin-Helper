@@ -57,7 +57,7 @@ public class CoinService {
         }
         System.out.println("finish!");
     }
-    */
+
 
     @Transactional
     @Scheduled(fixedDelay = 1000)
@@ -86,6 +86,8 @@ public class CoinService {
         }
         //System.out.println("finish!");
     }
+    */
+
 
     @Transactional
     public List<CoinLikeResponseDto> findAll(){
@@ -201,7 +203,7 @@ public class CoinService {
     public List<CoinResponseDto> deleteAll(){
         coinRepository.deleteAll();
         coinInfoRepository.deleteAll();
-        return new ArrayList<CoinResponseDto>();
+        return new ArrayList<>();
     }
 
 }
