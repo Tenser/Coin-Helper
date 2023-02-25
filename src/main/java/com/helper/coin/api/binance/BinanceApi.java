@@ -97,12 +97,12 @@ public class BinanceApi implements ExchangeApi {
             nowAmount += Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
         }
         Map<String, Double> res = new HashMap<>();
-        res.put("beforeVolume", beforeVolume);
-        res.put("nowVolume", nowVolume);
+        res.put("beforeVolume", Math.round(beforeVolume * 100) / 100.0);
+        res.put("nowVolume", Math.round(nowVolume * 100) / 100.0);
         res.put("beforePrice", Double.parseDouble((String)(((JSONArray)jsonArray.get(unit-1)).get(4))));
         res.put("nowPrice", Double.parseDouble((String)(((JSONArray)jsonArray.get(unit*2-1)).get(4))));
-        res.put("beforeAmount", beforeAmount);
-        res.put("nowAmount", nowAmount);
+        res.put("beforeAmount", Math.round(beforeAmount * 100) / 100.0);
+        res.put("nowAmount", Math.round(nowAmount * 100) / 100.0);
         return res;
     }
 

@@ -115,12 +115,12 @@ public class UpbitApi implements ExchangeApi {
             beforeAmount += (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_price");
         }
         Map<String, Double> res = new HashMap<>();
-        res.put("beforeVolume", beforeVolume);
-        res.put("nowVolume", nowVolume);
+        res.put("beforeVolume", Math.round(beforeVolume * 100) / 100.0);
+        res.put("nowVolume", Math.round(nowVolume * 100) / 100.0);
         res.put("beforePrice", (Double) ((JSONObject)jsonArray.get(unit)).get("trade_price"));
         res.put("nowPrice", (Double) ((JSONObject)jsonArray.get(0)).get("trade_price"));
-        res.put("beforeAmount", beforeAmount);
-        res.put("nowAmount", nowAmount);
+        res.put("beforeAmount", Math.round(beforeAmount * 100) / 100.0);
+        res.put("nowAmount", Math.round(nowAmount * 100) / 100.0);
         return res;
     }
 
