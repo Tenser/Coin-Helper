@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,10 +114,13 @@ public class CoinService {
     public List<CoinRankingResponseDto> findAllOrderByVolumeUp(int unit, String currency, String exchange){
         List<CoinInfo> coinInfos = coinInfoRepository.findOrderByVolumeUp(currency, exchange, unit);
         List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
+        Map<String, Object> res = new HashMap<>();
+        res.put("modifiedDate", coinInfos.get(0).getModifiedDate());
         for (CoinInfo coinInfo: coinInfos){
             Coin coin = coinRepository.findById2(coinInfo.getCoinId());
             responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
         }
+        res.put("ranking", responseDtos);
         return responseDtos;
     }
 
@@ -124,10 +128,13 @@ public class CoinService {
     public List<CoinRankingResponseDto> findAllOrderByPriceUp(int unit, String currency, String exchange){
         List<CoinInfo> coinInfos = coinInfoRepository.findOrderByPriceUp(currency, exchange, unit);
         List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
+        Map<String, Object> res = new HashMap<>();
+        res.put("modifiedDate", coinInfos.get(0).getModifiedDate());
         for (CoinInfo coinInfo: coinInfos){
             Coin coin = coinRepository.findById2(coinInfo.getCoinId());
             responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
         }
+        res.put("ranking", responseDtos);
         return responseDtos;
     }
 
@@ -159,6 +166,7 @@ public class CoinService {
             Double priceAmerica = coinInfoRepository.findByCoinIdAndUnit(coins.get(i+n).getId(), 5).getNowPrice();
             Double premium = priceKorea / (priceAmerica * ExchangeRate.exchangeRate);
             premium = Math.round(premium * 10000) / 10000.0;
+            //premium = (premium - 1) * 100;
             responseDtos.add(new CoinPremiumResponseDto(coins.get(i).getName(), priceKorea, priceAmerica, premium));
         }
         return responseDtos;

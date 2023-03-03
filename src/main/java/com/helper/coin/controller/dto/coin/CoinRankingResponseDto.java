@@ -12,7 +12,11 @@ import java.time.LocalDateTime;
 @Getter
 public class CoinRankingResponseDto {
 
-    private String coinName;
+    private String name;
+
+    private String currency;
+
+    private String exchange;
 
     private Double nowPrice;
 
@@ -28,7 +32,9 @@ public class CoinRankingResponseDto {
 
 
     public CoinRankingResponseDto(CoinInfo coinInfo, Coin coin){
-        this.coinName = coin.getName();
+        this.name = coin.getName();
+        this.currency = coin.getCurrency();
+        this.exchange = coin.getExchange();
         this.nowPrice = coinInfo.getNowPrice();
         this.beforePrice = coinInfo.getBeforePrice();
         this.nowVolume = coinInfo.getNowVolume();
