@@ -72,6 +72,11 @@ public class CoinController {
         return coinService.findPremium();
     }
 
+    @GetMapping("/mobile/coin/premium")
+    public Map<String, Object> findPremiumMobile(){
+        return coinService.findPremiumMobile();
+    }
+
     @GetMapping("/coin/detailView/{name}")
     public List<CoinLikeResponseDto> detailView(@PathVariable String name){
         return coinService.showDetailByName(name);

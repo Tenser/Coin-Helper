@@ -114,13 +114,10 @@ public class CoinService {
     public List<CoinRankingResponseDto> findAllOrderByVolumeUp(int unit, String currency, String exchange){
         List<CoinInfo> coinInfos = coinInfoRepository.findOrderByVolumeUp(currency, exchange, unit);
         List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
-        Map<String, Object> res = new HashMap<>();
-        res.put("modifiedDate", coinInfos.get(0).getModifiedDate());
         for (CoinInfo coinInfo: coinInfos){
             Coin coin = coinRepository.findById2(coinInfo.getCoinId());
             responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
         }
-        res.put("ranking", responseDtos);
         return responseDtos;
     }
 
@@ -128,13 +125,10 @@ public class CoinService {
     public List<CoinRankingResponseDto> findAllOrderByPriceUp(int unit, String currency, String exchange){
         List<CoinInfo> coinInfos = coinInfoRepository.findOrderByPriceUp(currency, exchange, unit);
         List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
-        Map<String, Object> res = new HashMap<>();
-        res.put("modifiedDate", coinInfos.get(0).getModifiedDate());
         for (CoinInfo coinInfo: coinInfos){
             Coin coin = coinRepository.findById2(coinInfo.getCoinId());
             responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
         }
-        res.put("ranking", responseDtos);
         return responseDtos;
     }
 
@@ -143,12 +137,12 @@ public class CoinService {
         List<CoinInfo> coinInfos = coinInfoRepository.findOrderByVolumeUp(currency, exchange, unit);
         List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
         Map<String, Object> res = new HashMap<>();
-        res.put("modifiedDate", coinInfos.get(0).getModifiedDate());
+        res.put("updateTime", coinInfos.get(0).getModifiedDate());
         for (CoinInfo coinInfo: coinInfos){
             Coin coin = coinRepository.findById2(coinInfo.getCoinId());
             responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
         }
-        res.put("ranking", responseDtos);
+        res.put("coins", responseDtos);
         return res;
     }
 
@@ -157,12 +151,12 @@ public class CoinService {
         List<CoinInfo> coinInfos = coinInfoRepository.findOrderByPriceUp(currency, exchange, unit);
         List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
         Map<String, Object> res = new HashMap<>();
-        res.put("modifiedDate", coinInfos.get(0).getModifiedDate());
+        res.put("updateTime", coinInfos.get(0).getModifiedDate());
         for (CoinInfo coinInfo: coinInfos){
             Coin coin = coinRepository.findById2(coinInfo.getCoinId());
             responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
         }
-        res.put("ranking", responseDtos);
+        res.put("coins", responseDtos);
         return res;
     }
 
@@ -188,8 +182,8 @@ public class CoinService {
         List<Coin> coins = coinRepository.findPremium();
         List<CoinPremiumResponseDto> responseDtos = new ArrayList<>();
         int n = coins.size()/2;
+
         for(int i=0;i<n;i++){
-            coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 5).getNowPrice();
             Double priceKorea = coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 5).getNowPrice();
             Double priceAmerica = coinInfoRepository.findByCoinIdAndUnit(coins.get(i+n).getId(), 5).getNowPrice();
             Double premium = priceKorea / (priceAmerica * ExchangeRate.exchangeRate);
@@ -198,6 +192,27 @@ public class CoinService {
             responseDtos.add(new CoinPremiumResponseDto(coins.get(i).getName(), priceKorea, priceAmerica, premium));
         }
         return responseDtos;
+    }
+
+    @Transactional
+    public Map<String, Object> findPremiumMobile(){
+        List<Coin> coins = coinRepository.findPremium();
+        List<CoinPremiumResponseDto> responseDtos = new ArrayList<>();
+        int n = coins.size()/2;
+        Map<String, Object> res = new HashMap<>();
+        CoinInfo coinInfo = coinInfoRepository.findByCoinIdAndUnit(1l, 5);
+        res.put("updateTime", coinInfo.getModifiedDate());
+        for(int i=0;i<n;i++){
+            Double priceKorea = coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 5).getNowPrice();
+            Double priceAmerica = coinInfoRepository.findByCoinIdAndUnit(coins.get(i+n).getId(), 5).getNowPrice();
+            Double premium = priceKorea / (priceAmerica * ExchangeRate.exchangeRate);
+            premium = (premium - 1) * 100;
+            premium = Math.round(premium * 100) / 100.0;
+            //premium = (premium - 1) * 100;
+            responseDtos.add(new CoinPremiumResponseDto(coins.get(i).getName(), priceKorea, priceAmerica, premium));
+        }
+        res.put("coins", responseDtos);
+        return res;
     }
 
     @Transactional
