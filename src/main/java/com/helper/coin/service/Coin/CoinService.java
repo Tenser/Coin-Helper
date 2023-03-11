@@ -139,6 +139,34 @@ public class CoinService {
     }
 
     @Transactional
+    public Map<String, Object> findAllOrderByVolumeUpMobile(int unit, String currency, String exchange){
+        List<CoinInfo> coinInfos = coinInfoRepository.findOrderByVolumeUp(currency, exchange, unit);
+        List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
+        Map<String, Object> res = new HashMap<>();
+        res.put("modifiedDate", coinInfos.get(0).getModifiedDate());
+        for (CoinInfo coinInfo: coinInfos){
+            Coin coin = coinRepository.findById2(coinInfo.getCoinId());
+            responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
+        }
+        res.put("ranking", responseDtos);
+        return res;
+    }
+
+    @Transactional
+    public Map<String, Object> findAllOrderByPriceUpMobile(int unit, String currency, String exchange){
+        List<CoinInfo> coinInfos = coinInfoRepository.findOrderByPriceUp(currency, exchange, unit);
+        List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
+        Map<String, Object> res = new HashMap<>();
+        res.put("modifiedDate", coinInfos.get(0).getModifiedDate());
+        for (CoinInfo coinInfo: coinInfos){
+            Coin coin = coinRepository.findById2(coinInfo.getCoinId());
+            responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
+        }
+        res.put("ranking", responseDtos);
+        return res;
+    }
+
+    @Transactional
     public CoinResponseDto insert(String name){
         return new CoinResponseDto(coinRepository.save(Coin.builder().name(name).currency("KRW").exchange("upbit").build()));
     }

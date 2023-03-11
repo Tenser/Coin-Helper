@@ -36,6 +36,16 @@ public class CoinController {
         return coinService.findAllOrderByPriceUp(unit, currency, exchange);
     }
 
+    @GetMapping("/mobile/coin/volume/ranking/{unit}/{currency}/{exchange}")
+    public Map<String, Object> findAllOrderByVolumeUpMobile(@PathVariable int unit, @PathVariable String currency, @PathVariable String exchange){
+        return coinService.findAllOrderByVolumeUpMobile(unit, currency, exchange);
+    }
+
+    @GetMapping("/mobile/coin/price/ranking/{unit}/{currency}/{exchange}")
+    public Map<String, Object> findAllOrderByPriceUpMobile(@PathVariable int unit, @PathVariable String currency, @PathVariable String exchange){
+        return coinService.findAllOrderByPriceUpMobile(unit, currency, exchange);
+    }
+
 
     @GetMapping("/coin/insert/{name}")
     public CoinResponseDto insert(@PathVariable String name){
