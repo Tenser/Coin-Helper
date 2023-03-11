@@ -200,8 +200,8 @@ public class CoinService {
         List<CoinPremiumResponseDto> responseDtos = new ArrayList<>();
         int n = coins.size()/2;
         Map<String, Object> res = new HashMap<>();
-        CoinInfo coinInfo = coinInfoRepository.findByCoinIdAndUnit(1l, 5);
-        res.put("updateTime", coinInfo.getModifiedDate());
+        List<CoinInfo> coinInfos = coinInfoRepository.findAll();
+        res.put("updateTime", coinInfos.get(0).getModifiedDate());
         for(int i=0;i<n;i++){
             Double priceKorea = coinInfoRepository.findByCoinIdAndUnit(coins.get(i).getId(), 5).getNowPrice();
             Double priceAmerica = coinInfoRepository.findByCoinIdAndUnit(coins.get(i+n).getId(), 5).getNowPrice();
