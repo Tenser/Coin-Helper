@@ -78,7 +78,7 @@ public class CoinController {
     }
 
     @GetMapping("/coin/detailView/{name}")
-    public List<CoinLikeResponseDto> detailView(@PathVariable String name){
+    public Map<String, Object> detailView(@PathVariable String name){
         return coinService.showDetailByName(name);
     }
 

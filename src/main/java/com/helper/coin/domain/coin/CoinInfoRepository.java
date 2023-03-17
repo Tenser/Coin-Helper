@@ -11,6 +11,9 @@ public interface CoinInfoRepository extends JpaRepository<CoinInfo, Long> {
     @Query("select c from CoinInfo c where c.coinId=:coinId and c.unit=:unit")
     CoinInfo findByCoinIdAndUnit(Long coinId, int unit);
 
+    @Query("select c from CoinInfo c where c.coinId=:coinId")
+    ArrayList<CoinInfo> findByCoinId(Long coinId);
+
     @Query("select ci from CoinInfo ci left join Coin c on c.id=ci.coinId where c.currency=:currency and c.exchange=:exchange and ci.unit=:unit and ci.beforePrice > 0 order by ci.nowPrice/ci.beforePrice desc")
     ArrayList<CoinInfo> findOrderByPriceUp(String currency, String exchange, int unit);
 

@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -241,13 +242,20 @@ public class CoinService {
     }
 
     @Transactional
-    public List<CoinLikeResponseDto> showDetailByName(String name){
+    public Map<String, Object> showDetailByName(String name){
         List<Coin> coins = coinRepository.findAllByName(name);
-        List<CoinLikeResponseDto> responseDtos = new ArrayList<>();
+        Map<String, Object> res = new HashMap<>();
+        List<CoinRankingResponseDto> responseDtos = new ArrayList<>();
         for (Coin coin: coins){
-            responseDtos.add(new CoinLikeResponseDto(coin));
+            List<CoinInfo> coinInfos = coinInfoRepository.findByCoinId(coin.getId());
+            if (res.get("updateTime") == null)
+                res.put("updateTime", coinInfos.get(0).getModifiedDate());
+            for (CoinInfo coinInfo: coinInfos){
+                responseDtos.add(new CoinRankingResponseDto(coinInfo, coin));
+            }
         }
-        return responseDtos;
+        res.put("coins", responseDtos);
+        return res;
     }
 
     @Transactional
