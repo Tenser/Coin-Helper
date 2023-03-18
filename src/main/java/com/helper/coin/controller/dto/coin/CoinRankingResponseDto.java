@@ -18,6 +18,8 @@ public class CoinRankingResponseDto {
 
     private String exchange;
 
+    private int unit;
+
     private Double nowPrice;
 
     private Double beforePrice;
@@ -35,6 +37,7 @@ public class CoinRankingResponseDto {
         this.name = coin.getName();
         this.currency = coin.getCurrency();
         this.exchange = coin.getExchange();
+        this.unit = coinInfo.getUnit();
         this.nowPrice = coinInfo.getNowPrice();
         this.beforePrice = coinInfo.getBeforePrice();
         this.nowVolume = coinInfo.getNowVolume();
