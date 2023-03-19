@@ -95,7 +95,7 @@ public class UpbitApi implements ExchangeApi {
     */
 
     public Map<String, Double> getMinuteCandle(int unit, String coinName, String currency) throws Exception{
-        int unitStandard = 1;
+        int unitStandard = 5;
         Map<String, String> params = new HashMap<>();
         params.put("market", currency+"-"+coinName);
         params.put("count", Integer.toString(unit * 2 / unitStandard));
