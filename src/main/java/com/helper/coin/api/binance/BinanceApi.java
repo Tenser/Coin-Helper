@@ -75,10 +75,11 @@ public class BinanceApi implements ExchangeApi {
     }
 
     public Map<String, Double> getMinuteCandle(int unit, String coinName, String currency) throws Exception{
+        int unitStandard = 1;
         Map<String, String> params = new HashMap<>();
         params.put("symbol", coinName+currency);
-        params.put("interval", "5m");
-        params.put("limit", Integer.toString(unit * 2 / 5));
+        params.put("interval", Integer.toString(unitStandard) + "m");
+        params.put("limit", Integer.toString(unit * 2 / unitStandard));
         JSONArray jsonArray = (JSONArray)new JSONParser().parse(sendGetRequest("/api/v3/klines", params));
         //System.out.println(jsonArray.toString());
         //System.out.println(jsonArray.toString());
@@ -86,12 +87,12 @@ public class BinanceApi implements ExchangeApi {
         Double nowVolume = 0.0;
         Double beforeAmount = 0.0;
         Double nowAmount = 0.0;
-        for(int i=0;i<unit/5;i++){
+        for(int i=0;i<unit/unitStandard;i++){
             Double volume = Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(5)));
             beforeVolume += volume;
             beforeAmount += Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
         }
-        for(int i=unit/5;i<unit*2/5;i++){
+        for(int i=unit/unitStandard;i<unit*2/unitStandard;i++){
             Double volume = Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(5)));
             nowVolume += volume;
             nowAmount += Double.parseDouble((String)(((JSONArray)jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
@@ -99,8 +100,8 @@ public class BinanceApi implements ExchangeApi {
         Map<String, Double> res = new HashMap<>();
         res.put("beforeVolume", Math.round(beforeVolume * 100) / 100.0);
         res.put("nowVolume", Math.round(nowVolume * 100) / 100.0);
-        res.put("beforePrice", Double.parseDouble((String)(((JSONArray)jsonArray.get(unit/5-1)).get(4))));
-        res.put("nowPrice", Double.parseDouble((String)(((JSONArray)jsonArray.get(unit*2/5-1)).get(4))));
+        res.put("beforePrice", Double.parseDouble((String)(((JSONArray)jsonArray.get(unit/unitStandard-1)).get(4))));
+        res.put("nowPrice", Double.parseDouble((String)(((JSONArray)jsonArray.get(unit*2/unitStandard-1)).get(4))));
         res.put("beforeAmount", Math.round(beforeAmount * 100) / 100.0);
         res.put("nowAmount", Math.round(nowAmount * 100) / 100.0);
         return res;
