@@ -32,7 +32,8 @@ public class CoinService {
     private final ExchangeApi upbitApi;
     private final ExchangeApi binanceApi;
     private Double exchangeRate;
-    int[] units = {5, 30, 60, 120, 240};
+    //int[] units = {5, 30, 60, 120, 240};
+    int[] units = {5, 60};
 
     /*
     @Transactional
@@ -84,7 +85,7 @@ public class CoinService {
                     coinInfoRepository.findByCoinIdAndUnit(coinId, unit).update(res.get("nowVolume"), res.get("beforeVolume"), res.get("nowPrice"), res.get("beforePrice"), res.get("nowAmount"), res.get("beforeAmount"));
                 }
             }
-            Thread.sleep(150);
+            Thread.sleep(100);
         }
         //System.out.println("finish!");
     }
