@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.helper.coin.api.ExchangeApi;
 import com.helper.coin.api.ExchangeRate;
 import com.helper.coin.api.binance.BinanceApi;
+import com.helper.coin.service.Coin.CoinService;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -94,35 +95,40 @@ public class UpbitApi implements ExchangeApi {
     }
     */
 
-    public Map<String, Double> getMinuteCandle(int unit, String coinName, String currency) throws Exception{
+    public List<Map<String, Double>> getMinuteCandle(String coinName, String currency) throws Exception{
         int unitStandard = 5;
         Map<String, String> params = new HashMap<>();
         params.put("market", currency+"-"+coinName);
-        params.put("count", Integer.toString(unit * 2 / unitStandard));
+        params.put("count", Integer.toString(CoinService.units[CoinService.units.length-1] * 2 / unitStandard));
         JSONArray jsonArray = (JSONArray)new JSONParser().parse(sendGetRequest("/v1/candles/minutes/" + Integer.toString(unitStandard), params));
         //System.out.println(jsonArray.toString());
-        Double beforeVolume = 0.0;
-        Double nowVolume = 0.0;
-        Double beforeAmount = 0.0;
-        Double nowAmount = 0.0;
-        for(int i=0;i<unit/unitStandard;i++){
-            Double volume = (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_volume");
-            nowVolume += volume;
-            nowAmount += (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_price");
+        List<Map<String, Double>> ress = new ArrayList<>();
+        for (int unit: CoinService.units) {
+            Double beforeVolume = 0.0;
+            Double nowVolume = 0.0;
+            Double beforeAmount = 0.0;
+            Double nowAmount = 0.0;
+            for (int i = 0; i < unit / unitStandard; i++) {
+                Double volume = (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_volume");
+                nowVolume += volume;
+                nowAmount += (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_price");
+            }
+            for (int i = unit / unitStandard; i < unit * 2 / unitStandard; i++) {
+                Double volume = (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_volume");
+                beforeVolume += volume;
+                beforeAmount += (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_price");
+            }
+            Map<String, Double> res = new HashMap<>();
+            res.put("beforeVolume", Math.round(beforeVolume * 100) / 100.0);
+            res.put("nowVolume", Math.round(nowVolume * 100) / 100.0);
+            res.put("beforePrice", (Double) ((JSONObject)jsonArray.get(unit/unitStandard)).get("trade_price"));
+            res.put("nowPrice", (Double) ((JSONObject)jsonArray.get(0)).get("trade_price"));
+            res.put("beforeAmount", Math.round(beforeAmount * 100) / 100.0);
+            res.put("nowAmount", Math.round(nowAmount * 100) / 100.0);
+            ress.add(res);
         }
-        for(int i=unit/unitStandard;i<unit*2/unitStandard;i++){
-            Double volume = (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_volume");
-            beforeVolume += volume;
-            beforeAmount += (Double) ((JSONObject)jsonArray.get(i)).get("candle_acc_trade_price");
-        }
-        Map<String, Double> res = new HashMap<>();
-        res.put("beforeVolume", Math.round(beforeVolume * 100) / 100.0);
-        res.put("nowVolume", Math.round(nowVolume * 100) / 100.0);
-        res.put("beforePrice", (Double) ((JSONObject)jsonArray.get(unit/unitStandard)).get("trade_price"));
-        res.put("nowPrice", (Double) ((JSONObject)jsonArray.get(0)).get("trade_price"));
-        res.put("beforeAmount", Math.round(beforeAmount * 100) / 100.0);
-        res.put("nowAmount", Math.round(nowAmount * 100) / 100.0);
-        return res;
+
+        return ress;
     }
 
     public List<Map<String, String>> getMarketAll() throws Exception {

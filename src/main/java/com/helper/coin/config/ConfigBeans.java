@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class ConfigBeans {
-
     @Bean(name = "upbitApi")
     public ExchangeApi upbitApi(){
         return new UpbitApi("asd", "asd", "https://api.upbit.com");

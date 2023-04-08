@@ -33,7 +33,7 @@ public class CoinService {
     private final ExchangeApi binanceApi;
     private Double exchangeRate;
     //int[] units = {5, 30, 60, 120, 240};
-    int[] units = {5, 60};
+    public static int[] units = {5, 60};
 
     /*
     @Transactional
@@ -68,21 +68,27 @@ public class CoinService {
         List<Coin> upbitCoins = coinRepository.findByExchange("upbit");
         List<Coin> binanceCoins = coinRepository.findByExchange("binance");
 
-        Map<String, Double> res;
+        List<Map<String, Double>> res;
         ExchangeRate.setExchangeRate();
         for(int i=0;i<Math.max(upbitCoins.size(), binanceCoins.size());i++) {
             if(upbitCoins.size() > i){
                 Long coinId = upbitCoins.get(i).getId();
-                for(int unit: units){
-                    res = upbitApi.getMinuteCandle(unit, upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency());
-                    coinInfoRepository.findByCoinIdAndUnit(coinId, unit).update(res.get("nowVolume"), res.get("beforeVolume"), res.get("nowPrice"), res.get("beforePrice"), res.get("nowAmount"), res.get("beforeAmount"));
+                res = upbitApi.getMinuteCandle(upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency());
+                for(int j = 0;j < units.length;j++){
+
+                    coinInfoRepository.findByCoinIdAndUnit(coinId, units[j]).update(res.get(j).get("nowVolume"),
+                            res.get(j).get("beforeVolume"), res.get(j).get("nowPrice"), res.get(j).get("beforePrice"),
+                            res.get(j).get("nowAmount"), res.get(j).get("beforeAmount"));
                 }
             }
             if(binanceCoins.size() > i){
                 Long coinId = binanceCoins.get(i).getId();
-                for(int unit: units){
-                    res = binanceApi.getMinuteCandle(unit, binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency());
-                    coinInfoRepository.findByCoinIdAndUnit(coinId, unit).update(res.get("nowVolume"), res.get("beforeVolume"), res.get("nowPrice"), res.get("beforePrice"), res.get("nowAmount"), res.get("beforeAmount"));
+                res = binanceApi.getMinuteCandle(binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency());
+                for(int j = 0;j < units.length;j++){
+
+                    coinInfoRepository.findByCoinIdAndUnit(coinId, units[j]).update(res.get(j).get("nowVolume"),
+                            res.get(j).get("beforeVolume"), res.get(j).get("nowPrice"), res.get(j).get("beforePrice"),
+                            res.get(j).get("nowAmount"), res.get(j).get("beforeAmount"));
                 }
             }
             Thread.sleep(200);
