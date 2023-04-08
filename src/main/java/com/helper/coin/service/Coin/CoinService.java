@@ -85,7 +85,7 @@ public class CoinService {
                     coinInfoRepository.findByCoinIdAndUnit(coinId, unit).update(res.get("nowVolume"), res.get("beforeVolume"), res.get("nowPrice"), res.get("beforePrice"), res.get("nowAmount"), res.get("beforeAmount"));
                 }
             }
-            Thread.sleep(100);
+            Thread.sleep(200);
         }
         //System.out.println("finish!");
     }
