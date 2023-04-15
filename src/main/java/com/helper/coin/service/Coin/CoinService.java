@@ -27,7 +27,7 @@ import java.util.*;
 public class CoinService {
 
     private final CoinRepository coinRepository;
-    private final CoinInfoRepository coinInfoRepository;
+    //private final CoinInfoRepository coinInfoRepository;
     private final ExchangeApi upbitApi;
     private final ExchangeApi binanceApi;
     private Double exchangeRate;
@@ -191,7 +191,7 @@ public class CoinService {
         for (List<Map<String, Object>> coinInfo: coinInfos){
             if (coinInfo != null && coinInfo.get(i).get("currency").equals(currency) && coinInfo.get(i).get("exchange")
                     .equals(exchange) && (Double)coinInfo.get(i).get("beforeAmount") > 0.0)
-                responseDtos.add(new CoinRankingResponseDto(coinInfo.get(0)));
+                responseDtos.add(new CoinRankingResponseDto(coinInfo.get(i)));
         }
         Collections.sort(responseDtos, (a, b) -> (int)((b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()) * 1000)!=0
                 ?(int)((b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()) * 1000):-1);
@@ -210,7 +210,7 @@ public class CoinService {
         }
         for (List<Map<String, Object>> coinInfo: coinInfos){
             if (coinInfo != null && coinInfo.get(i).get("currency").equals(currency) && coinInfo.get(i).get("exchange").equals(exchange))
-                responseDtos.add(new CoinRankingResponseDto(coinInfo.get(0)));
+                responseDtos.add(new CoinRankingResponseDto(coinInfo.get(i)));
         }
         Collections.sort(responseDtos, (a, b) -> (int)((b.getNowPrice() / b.getBeforePrice() - a.getNowPrice() / a.getBeforePrice()) * 100));
         return responseDtos;
@@ -230,7 +230,7 @@ public class CoinService {
         for (List<Map<String, Object>> coinInfo: coinInfos){
             if (coinInfo != null && coinInfo.get(i).get("currency").equals(currency) && coinInfo.get(i).get("exchange")
                     .equals(exchange) && (Double)coinInfo.get(i).get("beforeAmount") > 0.0)
-                responseDtos.add(new CoinRankingResponseDto(coinInfo.get(0)));
+                responseDtos.add(new CoinRankingResponseDto(coinInfo.get(i)));
         }
         Collections.sort(responseDtos, (a, b) -> (int)((b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()) * 1000)!=0
                 ?(int)((b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()) * 1000):-1);
@@ -252,7 +252,7 @@ public class CoinService {
         }
         for (List<Map<String, Object>> coinInfo: coinInfos){
             if (coinInfo != null && coinInfo.get(i).get("currency").equals(currency) && coinInfo.get(i).get("exchange").equals(exchange))
-                responseDtos.add(new CoinRankingResponseDto(coinInfo.get(0)));
+                responseDtos.add(new CoinRankingResponseDto(coinInfo.get(i)));
         }
         Collections.sort(responseDtos, (a, b) -> (int)((b.getNowPrice() / b.getBeforePrice() - a.getNowPrice() / a.getBeforePrice()) * 100));
         res.put("updateTime", coinInfos[0].get(0).get("modifiedDate"));
@@ -361,24 +361,17 @@ public class CoinService {
     @Transactional
     public List<CoinResponseDto> insertAll() throws Exception {
         coinRepository.deleteAll();
-        coinInfoRepository.deleteAll();
         List<CoinResponseDto> responseDtos = new ArrayList<>();
         List<Map<String, String>> res = upbitApi.getMarketAll();
         for(Map<String, String> market: res){
             Coin coin = coinRepository.save(Coin.builder().name(market.get("name")).currency(market.get("currency")).exchange("upbit").build());
             responseDtos.add(new CoinResponseDto(coin));
-            for(int unit: units){
-                coinInfoRepository.save(CoinInfo.builder().coinId(coin.getId()).unit(unit).build());
-            }
         }
         res = binanceApi.getMarketAll().subList(0, 200);
         System.out.println(res.get(1).get("currency"));
         for(Map<String, String> market: res) {
             Coin coin = coinRepository.save(Coin.builder().name(market.get("name")).currency(market.get("currency")).exchange("binance").build());
             responseDtos.add(new CoinResponseDto(coin));
-            for (int unit : units) {
-                coinInfoRepository.save(CoinInfo.builder().coinId(coin.getId()).unit(unit).build());
-            }
         }
         return responseDtos;
     }
@@ -404,7 +397,6 @@ public class CoinService {
     @Transactional
     public List<CoinResponseDto> deleteAll(){
         coinRepository.deleteAll();
-        coinInfoRepository.deleteAll();
         return new ArrayList<>();
     }
 
