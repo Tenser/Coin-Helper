@@ -14,7 +14,7 @@ import java.util.Map;
 @Getter
 public class CoinRankingResponseDto {
 
-    private String name;
+    private String coinName;
 
     private String currency;
 
@@ -46,7 +46,7 @@ public class CoinRankingResponseDto {
      */
 
     public CoinRankingResponseDto(Map<String, Object> coinInfo){
-        this.name = (String) coinInfo.get("coinName");
+        this.coinName = (String) coinInfo.get("coinName");
         this.currency = (String) coinInfo.get("currency");
         this.nowPrice = (Double) coinInfo.get("nowPrice");
         this.beforePrice = (Double) coinInfo.get("beforePrice");
