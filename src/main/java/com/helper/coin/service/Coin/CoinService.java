@@ -189,10 +189,12 @@ public class CoinService {
             }
         }
         for (List<Map<String, Object>> coinInfo: coinInfos){
-            if (coinInfo != null && coinInfo.get(i).get("currency").equals(currency) && coinInfo.get(i).get("exchange").equals(exchange))
+            if (coinInfo != null && coinInfo.get(i).get("currency").equals(currency) && coinInfo.get(i).get("exchange")
+                    .equals(exchange) && (Double)coinInfo.get(i).get("beforeAmount") > 0.0)
                 responseDtos.add(new CoinRankingResponseDto(coinInfo.get(0)));
         }
-        Collections.sort(responseDtos, (a, b) -> (int)(b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()));
+        Collections.sort(responseDtos, (a, b) -> (int)((b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()) * 1000)!=0
+                ?(int)((b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()) * 1000):-1);
         return responseDtos;
     }
 
@@ -226,10 +228,12 @@ public class CoinService {
             }
         }
         for (List<Map<String, Object>> coinInfo: coinInfos){
-            if (coinInfo != null && coinInfo.get(i).get("currency").equals(currency) && coinInfo.get(i).get("exchange").equals(exchange))
+            if (coinInfo != null && coinInfo.get(i).get("currency").equals(currency) && coinInfo.get(i).get("exchange")
+                    .equals(exchange) && (Double)coinInfo.get(i).get("beforeAmount") > 0.0)
                 responseDtos.add(new CoinRankingResponseDto(coinInfo.get(0)));
         }
-        Collections.sort(responseDtos, (a, b) -> (int)(b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()));
+        Collections.sort(responseDtos, (a, b) -> (int)((b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()) * 1000)!=0
+                ?(int)((b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()) * 1000):-1);
         res.put("updateTime", coinInfos[0].get(0).get("modifiedDate"));
         res.put("coins", responseDtos);
         return res;
