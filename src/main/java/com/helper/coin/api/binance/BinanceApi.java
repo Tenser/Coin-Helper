@@ -20,6 +20,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class BinanceApi implements ExchangeApi {
@@ -53,64 +54,79 @@ public class BinanceApi implements ExchangeApi {
         return authenticationToken;
     }
 
-    public String sendGetRequest(String path, Map<String, String> params) throws Exception{
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        CloseableHttpResponse response;
+    public String sendGetRequest(String path, Map<String, String> params){
         try {
-            RequestBuilder rb = RequestBuilder.get()
-                    .setUri(new URI(ipAddress+path));
-            for(String key: params.keySet()) {
-                rb = rb.addParameter(key, params.get(key));
-            }
-            HttpUriRequest httpget = rb.build();
-            //System.out.println(httpget.toString());
-            response = httpclient.execute(httpget);
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            CloseableHttpResponse response;
             try {
-                return EntityUtils.toString(response.getEntity());
+                RequestBuilder rb = RequestBuilder.get()
+                        .setUri(new URI(ipAddress + path));
+                for (String key : params.keySet()) {
+                    rb = rb.addParameter(key, params.get(key));
+                }
+                HttpUriRequest httpget = rb.build();
+                //System.out.println(httpget.toString());
+                response = httpclient.execute(httpget);
+                try {
+                    return EntityUtils.toString(response.getEntity());
+                } finally {
+                    response.close();
+                }
             } finally {
-                response.close();
+                httpclient.close();
             }
-        } finally {
-            httpclient.close();
+        }catch (Exception E){
+            System.out.println(E);
+            return null;
         }
     }
 
-    public List<Map<String, Double>> getMinuteCandle(String coinName, String currency) throws Exception{
-        int unitStandard = 5;
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", coinName+currency);
-        params.put("interval", Integer.toString(unitStandard) + "m");
-        params.put("limit", Integer.toString(CoinService.units[CoinService.units.length-1] * 2 / unitStandard));
-        JSONArray jsonArray = (JSONArray)new JSONParser().parse(sendGetRequest("/api/v3/klines", params));
-        //System.out.println(jsonArray.toString());
-        //System.out.println(jsonArray.toString());
-        List<Map<String, Double>> ress = new ArrayList<>();
-        for (int unit: CoinService.units) {
-            Double beforeVolume = 0.0;
-            Double nowVolume = 0.0;
-            Double beforeAmount = 0.0;
-            Double nowAmount = 0.0;
-            for (int i = 0; i < unit / unitStandard; i++) {
-                Double volume = Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(5)));
-                beforeVolume += volume;
-                beforeAmount += Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
+    public List<Map<String, Object>> getMinuteCandle(String coinName, String currency, String exchange) throws Exception{
+        try {
+            int unitStandard = 5;
+            Map<String, String> params = new HashMap<>();
+            params.put("symbol", coinName + currency);
+            params.put("interval", Integer.toString(unitStandard) + "m");
+            params.put("limit", Integer.toString(CoinService.units[CoinService.units.length - 1] * 2 / unitStandard));
+            JSONArray jsonArray = (JSONArray) new JSONParser().parse(sendGetRequest("/api/v3/klines", params));
+            //System.out.println(jsonArray.toString());
+            //System.out.println(jsonArray.toString());
+            List<Map<String, Object>> ress = new ArrayList<>();
+            for (int unit : CoinService.units) {
+                Double beforeVolume = 0.0;
+                Double nowVolume = 0.0;
+                Double beforeAmount = 0.0;
+                Double nowAmount = 0.0;
+                for (int i = 0; i < unit / unitStandard; i++) {
+                    Double volume = Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(5)));
+                    beforeVolume += volume;
+                    beforeAmount += Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
+                }
+                for (int i = unit / unitStandard; i < unit * 2 / unitStandard; i++) {
+                    Double volume = Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(5)));
+                    nowVolume += volume;
+                    nowAmount += Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
+                }
+                Map<String, Object> res = new HashMap<>();
+                res.put("coinName", coinName);
+                res.put("currency", currency);
+                res.put("exchange", exchange);
+                res.put("beforeVolume", Math.round(beforeVolume * 100) / 100.0);
+                res.put("nowVolume", Math.round(nowVolume * 100) / 100.0);
+                res.put("beforePrice", Double.parseDouble((String) (((JSONArray) jsonArray.get(unit / unitStandard - 1)).get(4))));
+                res.put("nowPrice", Double.parseDouble((String) (((JSONArray) jsonArray.get(unit * 2 / unitStandard - 1)).get(4))));
+                res.put("beforeAmount", Math.round(beforeAmount * 100) / 100.0);
+                res.put("nowAmount", Math.round(nowAmount * 100) / 100.0);
+                res.put("modifiedDate", LocalDateTime.now());
+                ress.add(res);
             }
-            for (int i = unit / unitStandard; i < unit * 2 / unitStandard; i++) {
-                Double volume = Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(5)));
-                nowVolume += volume;
-                nowAmount += Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
-            }
-            Map<String, Double> res = new HashMap<>();
-            res.put("beforeVolume", Math.round(beforeVolume * 100) / 100.0);
-            res.put("nowVolume", Math.round(nowVolume * 100) / 100.0);
-            res.put("beforePrice", Double.parseDouble((String) (((JSONArray) jsonArray.get(unit / unitStandard - 1)).get(4))));
-            res.put("nowPrice", Double.parseDouble((String) (((JSONArray) jsonArray.get(unit * 2 / unitStandard - 1)).get(4))));
-            res.put("beforeAmount", Math.round(beforeAmount * 100) / 100.0);
-            res.put("nowAmount", Math.round(nowAmount * 100) / 100.0);
-            ress.add(res);
+            return ress;
+        }catch (Exception E){
+            System.out.println(E + "binance");
+            return null;
         }
-        return ress;
     }
+
 
     public List<Map<String, String>> getMarketAll() throws Exception {
         JSONObject jsonObject = (JSONObject)new JSONParser().parse(sendGetRequest("/api/v3/exchangeInfo", new HashMap<String, String>()));

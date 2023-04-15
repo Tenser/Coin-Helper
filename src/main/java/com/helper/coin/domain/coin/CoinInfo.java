@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -41,12 +42,13 @@ public class CoinInfo extends BaseTimeEntity {
         this.unit = unit;
     }
 
-    public void update(Double nowVolume, Double beforeVolume, Double nowPrice, Double beforePrice, Double nowAmount, Double beforeAmount){
+    public LocalDateTime update(Double nowVolume, Double beforeVolume, Double nowPrice, Double beforePrice, Double nowAmount, Double beforeAmount){
         this.nowPrice = nowPrice;
         this.beforePrice = beforePrice;
         this.nowVolume = nowVolume;
         this.beforeVolume = beforeVolume;
         this.nowAmount = nowAmount;
         this.beforeAmount = beforeAmount;
+        return this.getModifiedDate();
     }
 }

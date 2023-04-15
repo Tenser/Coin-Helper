@@ -20,6 +20,7 @@ import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.time.LocalDateTime;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -57,27 +58,33 @@ public class UpbitApi implements ExchangeApi {
         return authenticationToken;
     }
 
-    public String sendGetRequest(String path, Map<String, String> params) throws Exception{
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        CloseableHttpResponse response;
+    public String sendGetRequest(String path, Map<String, String> params){
         try {
-            RequestBuilder rb = RequestBuilder.get()
-                    .setUri(new URI(ipAddress+path));
-            for(String key: params.keySet()) {
-                rb = rb.addParameter(key, params.get(key));
-            }
-            HttpUriRequest httpget = rb.build();
-            //System.out.println(httpget.toString());
-            response = httpclient.execute(httpget);
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            CloseableHttpResponse response;
             try {
-                return EntityUtils.toString(response.getEntity());
+                RequestBuilder rb = RequestBuilder.get()
+                        .setUri(new URI(ipAddress + path));
+                for (String key : params.keySet()) {
+                    rb = rb.addParameter(key, params.get(key));
+                }
+                HttpUriRequest httpget = rb.build();
+                //System.out.println(httpget.toString());
+                response = httpclient.execute(httpget);
+                try {
+                    return EntityUtils.toString(response.getEntity());
+                } finally {
+                    response.close();
+                }
             } finally {
-                response.close();
+                httpclient.close();
             }
-        } finally {
-            httpclient.close();
+        }catch (Exception E){
+            System.out.println(E);
+            return null;
         }
     }
+
     /*
     public Map<String, Double> getMinuteCandle(int unit, String coinName, String currency, int count) throws Exception{
         Map<String, String> params = new HashMap<>();
@@ -95,40 +102,49 @@ public class UpbitApi implements ExchangeApi {
     }
     */
 
-    public List<Map<String, Double>> getMinuteCandle(String coinName, String currency) throws Exception{
-        int unitStandard = 5;
-        Map<String, String> params = new HashMap<>();
-        params.put("market", currency+"-"+coinName);
-        params.put("count", Integer.toString(CoinService.units[CoinService.units.length-1] * 2 / unitStandard));
-        JSONArray jsonArray = (JSONArray)new JSONParser().parse(sendGetRequest("/v1/candles/minutes/" + Integer.toString(unitStandard), params));
-        //System.out.println(jsonArray.toString());
-        List<Map<String, Double>> ress = new ArrayList<>();
-        for (int unit: CoinService.units) {
-            Double beforeVolume = 0.0;
-            Double nowVolume = 0.0;
-            Double beforeAmount = 0.0;
-            Double nowAmount = 0.0;
-            for (int i = 0; i < unit / unitStandard; i++) {
-                Double volume = (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_volume");
-                nowVolume += volume;
-                nowAmount += (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_price");
+    public List<Map<String, Object>> getMinuteCandle(String coinName, String currency, String exchange) throws Exception{
+        try {
+            int unitStandard = 5;
+            Map<String, String> params = new HashMap<>();
+            params.put("market", currency + "-" + coinName);
+            params.put("count", Integer.toString(CoinService.units[CoinService.units.length - 1] * 2 / unitStandard));
+            JSONArray jsonArray = (JSONArray) new JSONParser().parse(sendGetRequest("/v1/candles/minutes/" + Integer.toString(unitStandard), params));
+            //System.out.println(jsonArray.toString());
+            List<Map<String, Object>> ress = new ArrayList<>();
+            for (int unit : CoinService.units) {
+                Double beforeVolume = 0.0;
+                Double nowVolume = 0.0;
+                Double beforeAmount = 0.0;
+                Double nowAmount = 0.0;
+                for (int i = 0; i < unit / unitStandard; i++) {
+                    Double volume = (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_volume");
+                    nowVolume += volume;
+                    nowAmount += (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_price");
+                }
+                for (int i = unit / unitStandard; i < unit * 2 / unitStandard; i++) {
+                    Double volume = (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_volume");
+                    beforeVolume += volume;
+                    beforeAmount += (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_price");
+                }
+                Map<String, Object> res = new HashMap<>();
+                res.put("coinName", coinName);
+                res.put("currency", currency);
+                res.put("exchange", exchange);
+                res.put("beforeVolume", Math.round(beforeVolume * 100) / 100.0);
+                res.put("nowVolume", Math.round(nowVolume * 100) / 100.0);
+                res.put("beforePrice", (Double) ((JSONObject) jsonArray.get(unit / unitStandard)).get("trade_price"));
+                res.put("nowPrice", (Double) ((JSONObject) jsonArray.get(0)).get("trade_price"));
+                res.put("beforeAmount", Math.round(beforeAmount * 100) / 100.0);
+                res.put("nowAmount", Math.round(nowAmount * 100) / 100.0);
+                res.put("modifiedDate", LocalDateTime.now());
+                ress.add(res);
             }
-            for (int i = unit / unitStandard; i < unit * 2 / unitStandard; i++) {
-                Double volume = (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_volume");
-                beforeVolume += volume;
-                beforeAmount += (Double) ((JSONObject) jsonArray.get(i)).get("candle_acc_trade_price");
-            }
-            Map<String, Double> res = new HashMap<>();
-            res.put("beforeVolume", Math.round(beforeVolume * 100) / 100.0);
-            res.put("nowVolume", Math.round(nowVolume * 100) / 100.0);
-            res.put("beforePrice", (Double) ((JSONObject)jsonArray.get(unit/unitStandard)).get("trade_price"));
-            res.put("nowPrice", (Double) ((JSONObject)jsonArray.get(0)).get("trade_price"));
-            res.put("beforeAmount", Math.round(beforeAmount * 100) / 100.0);
-            res.put("nowAmount", Math.round(nowAmount * 100) / 100.0);
-            ress.add(res);
-        }
 
-        return ress;
+            return ress;
+        }catch (Exception E){
+            System.out.println(E + "upbit");
+            return null;
+        }
     }
 
     public List<Map<String, String>> getMarketAll() throws Exception {

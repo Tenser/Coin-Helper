@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 @Getter
@@ -15,10 +17,6 @@ public class CoinRankingResponseDto {
     private String name;
 
     private String currency;
-
-    private String exchange;
-
-    private int unit;
 
     private Double nowPrice;
 
@@ -32,7 +30,7 @@ public class CoinRankingResponseDto {
 
     private Double beforeAmount;
 
-
+    /*
     public CoinRankingResponseDto(CoinInfo coinInfo, Coin coin){
         this.name = coin.getName();
         this.currency = coin.getCurrency();
@@ -45,4 +43,17 @@ public class CoinRankingResponseDto {
         this.nowAmount = coinInfo.getNowAmount();
         this.beforeAmount = coinInfo.getBeforeAmount();
     }
+     */
+
+    public CoinRankingResponseDto(Map<String, Object> coinInfo){
+        this.name = (String) coinInfo.get("coinName");
+        this.currency = (String) coinInfo.get("currency");
+        this.nowPrice = (Double) coinInfo.get("nowPrice");
+        this.beforePrice = (Double) coinInfo.get("beforePrice");
+        this.nowVolume = (Double) coinInfo.get("nowVolume");
+        this.beforeVolume = (Double) coinInfo.get("beforeVolume");
+        this.nowAmount = (Double) coinInfo.get("nowAmount");
+        this.beforeAmount = (Double) coinInfo.get("beforeAmount");
+    }
+
 }

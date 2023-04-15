@@ -76,12 +76,12 @@ public class CoinController {
     public Map<String, Object> findPremiumMobile(){
         return coinService.findPremiumMobile();
     }
-
+    /*
     @GetMapping("/coin/detailView/{name}")
     public Map<String, Object> detailView(@PathVariable String name){
         return coinService.showDetailByName(name);
     }
-
+    */
     @GetMapping("/coin/deleteAll")
     public List<CoinResponseDto> deleteAll(){
         return coinService.deleteAll();
