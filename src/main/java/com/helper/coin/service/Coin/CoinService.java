@@ -32,7 +32,7 @@ public class CoinService {
     private final ExchangeApi binanceApi;
     private Double exchangeRate;
     //int[] units = {5, 30, 60, 120, 240};
-    public static int[] units = {5, 60};
+    public static int[] units = {5, 30, 60, 120, 240};
     private List<Map<String, Object>>[] coinInfos = new ArrayList[500];
 
     /*
@@ -127,7 +127,7 @@ public class CoinService {
                     //System.out.println(res);
                     coinInfos[200+i] = res;
                 }
-                Thread.sleep(200);
+                Thread.sleep(150);
             }
             //System.out.println("finish!");
             //System.out.println(coinInfos[150]);

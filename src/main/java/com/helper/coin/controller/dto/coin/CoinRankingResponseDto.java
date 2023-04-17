@@ -30,6 +30,7 @@ public class CoinRankingResponseDto {
 
     private Double beforeAmount;
 
+    private LocalDateTime modifiedDate;
     /*
     public CoinRankingResponseDto(CoinInfo coinInfo, Coin coin){
         this.name = coin.getName();
@@ -54,6 +55,7 @@ public class CoinRankingResponseDto {
         this.beforeVolume = (Double) coinInfo.get("beforeVolume");
         this.nowAmount = (Double) coinInfo.get("nowAmount");
         this.beforeAmount = (Double) coinInfo.get("beforeAmount");
+        this.modifiedDate = (LocalDateTime) coinInfo.get("modifiedDate");
     }
 
 }

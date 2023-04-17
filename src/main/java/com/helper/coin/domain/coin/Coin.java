@@ -25,7 +25,6 @@ public class Coin extends BaseTimeEntity {
     @Column(nullable = false)
     private String exchange;
 
-
     @Builder
     public Coin(String name, String currency, String exchange){
         this.name = name;
