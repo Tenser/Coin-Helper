@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
@@ -13,8 +13,8 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="f00a870d-4881-4867-8b48-f35aaf98c42c">
-      <console name="coin-helper" type="STANDARD" schema="mysql" session="Main" />
-      <console name="coin-helper 1" type="STANDARD" schema="coin_helper_database" session="Main" />
+      <console name="coin-helper" type="STANDARD" schema="mysql" session="Main"><![CDATA[select @@time_zone, now();]]></console>
+      <console name="coin-helper 1" type="STANDARD" schema="coin_helper_database" session="Main"><![CDATA[select @@time_zone, now();]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
