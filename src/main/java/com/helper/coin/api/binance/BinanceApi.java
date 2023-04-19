@@ -84,14 +84,16 @@ public class BinanceApi implements ExchangeApi {
     public List<Map<String, Object>> getMinuteCandle(String coinName, String currency, String exchange) throws Exception{
         try {
             int unitStandard = 5;
+            int maxUnit = CoinService.units[CoinService.units.length - 1];
             Map<String, String> params = new HashMap<>();
             params.put("symbol", coinName + currency);
             params.put("interval", Integer.toString(unitStandard) + "m");
-            params.put("limit", Integer.toString(CoinService.units[CoinService.units.length - 1] * 2 / unitStandard));
+            params.put("limit", Integer.toString(maxUnit * 2 / unitStandard));
             JSONArray jsonArray = (JSONArray) new JSONParser().parse(sendGetRequest("/api/v3/klines", params));
             //System.out.println(jsonArray.toString());
             //System.out.println(jsonArray.toString());
             List<Map<String, Object>> ress = new ArrayList<>();
+            Collections.reverse(jsonArray);
             for (int unit : CoinService.units) {
                 Double beforeVolume = 0.0;
                 Double nowVolume = 0.0;
@@ -99,13 +101,13 @@ public class BinanceApi implements ExchangeApi {
                 Double nowAmount = 0.0;
                 for (int i = 0; i < unit / unitStandard; i++) {
                     Double volume = Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(5)));
-                    beforeVolume += volume;
-                    beforeAmount += Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
+                    nowVolume += volume;
+                    nowAmount += Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
                 }
                 for (int i = unit / unitStandard; i < unit * 2 / unitStandard; i++) {
                     Double volume = Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(5)));
-                    nowVolume += volume;
-                    nowAmount += Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
+                    beforeVolume += volume;
+                    beforeAmount += Double.parseDouble((String) (((JSONArray) jsonArray.get(i)).get(7))) * ExchangeRate.exchangeRate;
                 }
                 Map<String, Object> res = new HashMap<>();
                 res.put("coinName", coinName);
@@ -120,6 +122,7 @@ public class BinanceApi implements ExchangeApi {
                 res.put("modifiedDate", LocalDateTime.now());
                 ress.add(res);
             }
+            if (ress.get(0).get("coinName").equals("BTC")) System.out.println(jsonArray.toString());;
             return ress;
         }catch (Exception E){
             System.out.println(E + "binance");
