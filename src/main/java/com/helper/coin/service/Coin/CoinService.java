@@ -400,4 +400,14 @@ public class CoinService {
         return new ArrayList<>();
     }
 
+    @Transactional
+    public List<CoinResponseDto> test(){
+        List<Coin> coins = coinRepository.findPremium();
+        List<CoinResponseDto> responseDtos = new ArrayList<>();
+        for (Coin coin: coins){
+            responseDtos.add(new CoinResponseDto(coin));
+        }
+        return responseDtos;
+    }
+
 }

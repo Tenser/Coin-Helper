@@ -86,4 +86,7 @@ public class CoinController {
     public List<CoinResponseDto> deleteAll(){
         return coinService.deleteAll();
     }
+
+    @GetMapping("/coin/test")
+    public List<CoinResponseDto> test() {return coinService.test();}
 }
