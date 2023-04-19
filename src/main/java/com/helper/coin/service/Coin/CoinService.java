@@ -307,7 +307,7 @@ public class CoinService {
         counts.put(coins.get(i).getName(), new Double[2]);
     for (List<Map<String, Object>> coinInfo: coinInfos){
         if (coinInfo != null && counts.containsKey(coinInfo.get(0).get("coinName"))){
-          if (coinInfo.get(0).get("exchange") == "upbit"){
+          if (coinInfo.get(0).get("exchange").equals("upbit")){
               counts.get(coinInfo.get(0).get("coinName"))[0] = (Double) coinInfo.get(0).get("nowPrice");
           }else{
               counts.get(coinInfo.get(0).get("coinName"))[1] = (Double) coinInfo.get(0).get("nowPrice");
@@ -337,7 +337,7 @@ public class CoinService {
             counts.put(coins.get(i).getName(), new Double[2]);
         for (List<Map<String, Object>> coinInfo: coinInfos){
             if (coinInfo != null && counts.containsKey(coinInfo.get(0).get("coinName"))){
-                if (coinInfo.get(0).get("exchange") == "upbit"){
+                if (coinInfo.get(0).get("exchange").equals("upbit")){
                     counts.get(coinInfo.get(0).get("coinName"))[0] = (Double) coinInfo.get(0).get("nowPrice");
                 }else{
                     counts.get(coinInfo.get(0).get("coinName"))[1] = (Double) coinInfo.get(0).get("nowPrice");
