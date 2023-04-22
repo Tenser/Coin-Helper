@@ -193,8 +193,7 @@ public class CoinService {
                     .equals(exchange) && (Double)coinInfo.get(i).get("beforeAmount") > 0.0)
                 responseDtos.add(new CoinRankingResponseDto(coinInfo.get(i)));
         }
-        Collections.sort(responseDtos, (a, b) -> (int)((b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()) * 1000)!=0
-                ?(int)((b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount()) * 1000):-1);
+        Collections.sort(responseDtos, (a, b) -> b.getNowAmount() / b.getBeforeAmount() - a.getNowAmount() / a.getBeforeAmount() > 0?1:-1);
         return responseDtos;
     }
 
@@ -212,7 +211,7 @@ public class CoinService {
             if (coinInfo != null && coinInfo.get(i).get("currency").equals(currency) && coinInfo.get(i).get("exchange").equals(exchange))
                 responseDtos.add(new CoinRankingResponseDto(coinInfo.get(i)));
         }
-        Collections.sort(responseDtos, (a, b) -> (int)((b.getNowPrice() / b.getBeforePrice() - a.getNowPrice() / a.getBeforePrice()) * 100));
+        Collections.sort(responseDtos, (a, b) -> b.getNowPrice() / b.getBeforePrice() - a.getNowPrice() / a.getBeforePrice() > 0?1:-1);
         return responseDtos;
     }
 
