@@ -81,10 +81,10 @@ public class BinanceApi implements ExchangeApi {
         }
     }
 
-    public List<Map<String, Object>> getMinuteCandle(String coinName, String currency, String exchange) throws Exception{
+    public List<Map<String, Object>> getMinuteCandle(String coinName, String currency, String exchange, int[] units) throws Exception{
         try {
             int unitStandard = 5;
-            int maxUnit = CoinService.units[CoinService.units.length - 1];
+            int maxUnit = units[units.length - 1];
             Map<String, String> params = new HashMap<>();
             params.put("symbol", coinName + currency);
             params.put("interval", Integer.toString(unitStandard) + "m");
@@ -94,7 +94,7 @@ public class BinanceApi implements ExchangeApi {
             //System.out.println(jsonArray.toString());
             List<Map<String, Object>> ress = new ArrayList<>();
             Collections.reverse(jsonArray);
-            for (int unit : CoinService.units) {
+            for (int unit : units) {
                 Double beforeVolume = 0.0;
                 Double nowVolume = 0.0;
                 Double beforeAmount = 0.0;

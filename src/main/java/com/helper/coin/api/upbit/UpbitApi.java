@@ -6,6 +6,7 @@ import com.helper.coin.api.ExchangeApi;
 import com.helper.coin.api.ExchangeRate;
 import com.helper.coin.api.binance.BinanceApi;
 import com.helper.coin.service.Coin.CoinService;
+import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -31,6 +32,7 @@ public class UpbitApi implements ExchangeApi {
     private String accessKey;
     private String secretKey;
     private String ipAddress;
+
 
     public UpbitApi(String accessKey, String secretKey, String ipAddress){
         this.accessKey = accessKey;
@@ -102,16 +104,16 @@ public class UpbitApi implements ExchangeApi {
     }
     */
 
-    public List<Map<String, Object>> getMinuteCandle(String coinName, String currency, String exchange) throws Exception{
+    public List<Map<String, Object>> getMinuteCandle(String coinName, String currency, String exchange, int[] units) throws Exception{
         try {
             int unitStandard = 5;
             Map<String, String> params = new HashMap<>();
             params.put("market", currency + "-" + coinName);
-            params.put("count", Integer.toString(CoinService.units[CoinService.units.length - 1] * 2 / unitStandard));
+            params.put("count", Integer.toString(units[units.length - 1] * 2 / unitStandard));
             JSONArray jsonArray = (JSONArray) new JSONParser().parse(sendGetRequest("/v1/candles/minutes/" + Integer.toString(unitStandard), params));
             //System.out.println(jsonArray.toString());
             List<Map<String, Object>> ress = new ArrayList<>();
-            for (int unit : CoinService.units) {
+            for (int unit : units) {
                 Double beforeVolume = 0.0;
                 Double nowVolume = 0.0;
                 Double beforeAmount = 0.0;

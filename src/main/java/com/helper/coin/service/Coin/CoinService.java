@@ -3,10 +3,7 @@ package com.helper.coin.service.Coin;
 import com.helper.coin.api.ExchangeApi;
 import com.helper.coin.api.ExchangeRate;
 import com.helper.coin.api.upbit.UpbitApi;
-import com.helper.coin.controller.dto.coin.CoinLikeResponseDto;
-import com.helper.coin.controller.dto.coin.CoinPremiumResponseDto;
-import com.helper.coin.controller.dto.coin.CoinRankingResponseDto;
-import com.helper.coin.controller.dto.coin.CoinResponseDto;
+import com.helper.coin.controller.dto.coin.*;
 import com.helper.coin.domain.coin.Coin;
 import com.helper.coin.domain.coin.CoinInfo;
 import com.helper.coin.domain.coin.CoinInfoRepository;
@@ -32,8 +29,8 @@ public class CoinService {
     private final ExchangeApi binanceApi;
     private Double exchangeRate;
     //int[] units = {5, 30, 60, 120, 240};
-    public static int[] units = {5, 30, 60, 120, 240};
-    private List<Map<String, Object>>[] coinInfos = new ArrayList[500];
+    private final int[] units;
+    private final List<Map<String, Object>>[] coinInfos;
 
     /*
     @Transactional
@@ -118,12 +115,12 @@ public class CoinService {
             ExchangeRate.setExchangeRate();
             for(int i=0;i<Math.max(upbitCoins.size(), binanceCoins.size());i++) {
                 if(upbitCoins.size() > i){
-                    res = upbitApi.getMinuteCandle(upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency(), upbitCoins.get(i).getExchange());
+                    res = upbitApi.getMinuteCandle(upbitCoins.get(i).getName(), upbitCoins.get(i).getCurrency(), upbitCoins.get(i).getExchange(), units);
                     //System.out.println(res);
                     coinInfos[i] = res;
                 }
                 if(binanceCoins.size() > i){
-                    res = binanceApi.getMinuteCandle(binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency(), binanceCoins.get(i).getExchange());
+                    res = binanceApi.getMinuteCandle(binanceCoins.get(i).getName(), binanceCoins.get(i).getCurrency(), binanceCoins.get(i).getExchange(), units);
                     //System.out.println(res);
                     coinInfos[200+i] = res;
                 }
@@ -392,6 +389,17 @@ public class CoinService {
         return res;
     }
      */
+
+    @Transactional
+    public List<CoinDetailViewResponseDto> showDetails(String coinName) {
+        List<CoinDetailViewResponseDto> responseDtos = new ArrayList<>();
+        for (List<Map<String, Object>> coinInfo: coinInfos){
+            if(coinInfo != null && coinInfo.get(0).get("coinName").equals(coinName)){
+                responseDtos.add(new CoinDetailViewResponseDto((String) coinInfo.get(0).get("exchange"), coinInfo));
+            }
+        }
+        return responseDtos;
+    }
 
     @Transactional
     public List<CoinResponseDto> deleteAll(){

@@ -1,9 +1,6 @@
 package com.helper.coin.controller;
 
-import com.helper.coin.controller.dto.coin.CoinLikeResponseDto;
-import com.helper.coin.controller.dto.coin.CoinPremiumResponseDto;
-import com.helper.coin.controller.dto.coin.CoinRankingResponseDto;
-import com.helper.coin.controller.dto.coin.CoinResponseDto;
+import com.helper.coin.controller.dto.coin.*;
 import com.helper.coin.domain.coin.CoinRepository;
 import com.helper.coin.service.Coin.CoinService;
 import lombok.RequiredArgsConstructor;
@@ -76,12 +73,12 @@ public class CoinController {
     public Map<String, Object> findPremiumMobile(){
         return coinService.findPremiumMobile();
     }
-    /*
+
     @GetMapping("/coin/detailView/{name}")
-    public Map<String, Object> detailView(@PathVariable String name){
-        return coinService.showDetailByName(name);
+    public List<CoinDetailViewResponseDto> detailView(@PathVariable String name){
+        return coinService.showDetails(name);
     }
-    */
+
     @GetMapping("/coin/deleteAll")
     public List<CoinResponseDto> deleteAll(){
         return coinService.deleteAll();
