@@ -395,7 +395,7 @@ public class CoinService {
         List<CoinDetailViewResponseDto> responseDtos = new ArrayList<>();
         for (List<Map<String, Object>> coinInfo: coinInfos){
             if(coinInfo != null && coinInfo.get(0).get("coinName").equals(coinName)){
-                responseDtos.add(new CoinDetailViewResponseDto((String) coinInfo.get(0).get("exchange"), coinInfo));
+                responseDtos.add(new CoinDetailViewResponseDto((String) coinInfo.get(0).get("coinName"), (String) coinInfo.get(0).get("currency"), (String) coinInfo.get(0).get("exchange"), coinInfo));
             }
         }
         return responseDtos;

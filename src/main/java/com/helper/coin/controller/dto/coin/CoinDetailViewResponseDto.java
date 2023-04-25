@@ -10,10 +10,14 @@ import java.util.Map;
 @NoArgsConstructor
 @Getter
 public class CoinDetailViewResponseDto {
+    String coinName;
+    String currency;
     String exchange;
     List<CoinRankingResponseDto> dtos;
 
-    public CoinDetailViewResponseDto(String exchange, List<Map<String, Object>> coinInfos){
+    public CoinDetailViewResponseDto(String coinName, String currency, String exchange, List<Map<String, Object>> coinInfos){
+        this.coinName = coinName;
+        this.currency = currency;
         this.exchange = exchange;
         dtos = new ArrayList<>();
         //System.out.println(coinInfos.toString());

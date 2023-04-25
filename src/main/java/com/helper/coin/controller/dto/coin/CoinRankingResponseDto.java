@@ -49,6 +49,7 @@ public class CoinRankingResponseDto {
     public CoinRankingResponseDto(Map<String, Object> coinInfo){
         this.coinName = (String) coinInfo.get("coinName");
         this.currency = (String) coinInfo.get("currency");
+        this.currency = (String) coinInfo.get("exchange");
         this.nowPrice = (Double) coinInfo.get("nowPrice");
         this.beforePrice = (Double) coinInfo.get("beforePrice");
         this.nowVolume = (Double) coinInfo.get("nowVolume");
