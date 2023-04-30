@@ -7,16 +7,20 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class UserResponseDto {
-    String id;
-    String name;
-    String apiKey;
-    String secretKey;
+    private String id;
+    private String name;
+    private String apiKey;
+    private String secretKey;
+    private int isOn;
+    private int level;
 
     public UserResponseDto(User user){
         this.id = user.getId();
         this.name = user.getName();
         this.apiKey = user.getApiKey();
         this.secretKey = user.getSecretKey();
+        this.isOn = user.getIsOn();
+        this.level = user.getLevel();
     }
 
 }

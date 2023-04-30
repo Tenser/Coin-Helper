@@ -50,4 +50,12 @@ public class UserController {
     public UserResponseDto findById(@PathVariable String id){
         return userService.findById(id);
     }
+
+    @PostMapping("/user/showLevel/{id}")
+    public int showLevel(@PathVariable String id) {return userService.showLevel(id);}
+
+    @PostMapping("/user/changeLevel/{id}/{level}")
+    public UserIsOkResponseDto changeLevel(@PathVariable String id, @PathVariable int level){
+        return userService.changeLevel(id, level);
+    }
 }

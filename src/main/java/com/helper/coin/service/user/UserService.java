@@ -90,5 +90,22 @@ public class UserService {
         return new UserTokenResponseDto("not expired", accessToken, refreshToken);
     }
 
+    @Transactional
+    public int showLevel(String id){
+        User user = userRepository.findByUserId(id);
+        if (user != null){
+            return user.getLevel();
+        }
+        return 0;
+    }
 
+    @Transactional
+    public UserIsOkResponseDto changeLevel(String id, int level){
+        User user = userRepository.findByUserId(id);
+        if (user != null){
+            user.changeLevel(level);
+            return new UserIsOkResponseDto("OK");
+        }
+        return new UserIsOkResponseDto("NO");
+    }
 }

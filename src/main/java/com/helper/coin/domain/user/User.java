@@ -34,15 +34,18 @@ public class User implements UserDetails {
 
     private int isOn;
 
+    private int level;
+
 
     @Builder
-    public User(String id, String name, String password, String apiKey, String secretKey){
+    public User(String id, String name, String password, String apiKey, String secretKey, int level){
         this.id = id;
         this.name = name;
         this.password = password;
         this.apiKey = apiKey;
         this.secretKey = secretKey;
         this.isOn = 0;
+        this.level = level;
     }
 
     public boolean isSamePassword(String password){
@@ -66,6 +69,10 @@ public class User implements UserDetails {
 
     public void off(){
         this.isOn = 0;
+    }
+
+    public void changeLevel(int level){
+        this.level = level;
     }
 
     @Override
