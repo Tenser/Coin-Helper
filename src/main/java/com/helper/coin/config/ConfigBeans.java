@@ -30,6 +30,6 @@ public class ConfigBeans {
     }
 
     @Bean(name = "coinInfos")
-    public List<Map<String, Object>>[] coinInfos() { return new ArrayList[500]; }
+    public List<Map<String, Object>>[] coinInfos() { return new ArrayList[800]; }
 
 }

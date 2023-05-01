@@ -363,7 +363,7 @@ public class CoinService {
             Coin coin = coinRepository.save(Coin.builder().name(market.get("name")).currency(market.get("currency")).exchange("upbit").build());
             responseDtos.add(new CoinResponseDto(coin));
         }
-        res = binanceApi.getMarketAll().subList(0, 200);
+        res = binanceApi.getMarketAll();
         System.out.println(res.get(1).get("currency"));
         for(Map<String, String> market: res) {
             Coin coin = coinRepository.save(Coin.builder().name(market.get("name")).currency(market.get("currency")).exchange("binance").build());
