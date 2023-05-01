@@ -5,6 +5,8 @@ import com.helper.coin.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 public class UserController {
@@ -57,5 +59,10 @@ public class UserController {
     @PostMapping("/user/changeLevel/{id}/{level}")
     public UserIsOkResponseDto changeLevel(@PathVariable String id, @PathVariable int level){
         return userService.changeLevel(id, level);
+    }
+
+    @PostMapping("/user/findAll")
+    public List<UserResponseDto> findAll(){
+        return userService.findAll();
     }
 }

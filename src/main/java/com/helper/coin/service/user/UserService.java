@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -107,5 +108,15 @@ public class UserService {
             return new UserIsOkResponseDto("OK");
         }
         return new UserIsOkResponseDto("NO");
+    }
+
+    @Transactional
+    public List<UserResponseDto> findAll(){
+        List<User> users = userRepository.findAll();
+        List<UserResponseDto> responseDtos = new ArrayList<>();
+        for (User user: users){
+            responseDtos.add(new UserResponseDto(user));
+        }
+        return responseDtos;
     }
 }
