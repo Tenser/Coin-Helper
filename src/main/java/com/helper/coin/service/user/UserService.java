@@ -18,10 +18,13 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public UserResponseDto save(UserSaveRequestDto requestDto){
-        userRepository.save(requestDto.toEntity());
+    public int save(UserSaveRequestDto requestDto){
+        if (userRepository.findByUserId(requestDto.getId()) == null){
+            userRepository.save(requestDto.toEntity());
+            return 1;
+        }
+        return 0;
         //System.out.println(requestDto.getId() + requestDto.getPassword());
-        return new UserResponseDto(userRepository.findByUserId(requestDto.getId()));
     }
 
     @Transactional

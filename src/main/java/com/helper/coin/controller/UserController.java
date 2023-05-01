@@ -14,7 +14,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/user/save")
-    public UserResponseDto save(@RequestBody UserSaveRequestDto requestDto){
+    public int save(@RequestBody UserSaveRequestDto requestDto){
         return userService.save(requestDto);
     }
 
