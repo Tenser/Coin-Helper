@@ -24,6 +24,6 @@ public class UserSaveRequestDto {
     }
 
     public User toEntity(){
-        return User.builder().id(id).name(name).password(password).apiKey(apiKey).secretKey(secretKey).build();
+        return User.builder().id(id).name(name).password(password).apiKey(apiKey).secretKey(secretKey).level(1).build();
     }
 }

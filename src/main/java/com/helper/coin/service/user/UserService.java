@@ -20,7 +20,7 @@ public class UserService {
     @Transactional
     public UserResponseDto save(UserSaveRequestDto requestDto){
         userRepository.save(requestDto.toEntity());
-        System.out.println(requestDto.getId() + requestDto.getPassword());
+        //System.out.println(requestDto.getId() + requestDto.getPassword());
         return new UserResponseDto(userRepository.findByUserId(requestDto.getId()));
     }
 
