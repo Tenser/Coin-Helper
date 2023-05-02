@@ -57,10 +57,9 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public void updateInform(String name, String apiKey, String secretKey){
+    public void updateInform(String name, String password){
         this.name = name;
-        this.apiKey = apiKey;
-        this.secretKey = secretKey;
+        this.password = password;
     }
 
     public void on(){

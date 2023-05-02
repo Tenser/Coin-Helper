@@ -66,11 +66,32 @@ public class UserService {
         return new UserIsOkResponseDto("NO");
     }
 
+    /*
     @Transactional
     public UserIsOkResponseDto updateInform(String id, UserUpdateInformRequestDto requestDto){
         User user = userRepository.findByUserId(id);
         if (user != null){
             user.updateInform(requestDto.getName(), requestDto.getApiKey(), requestDto.getSecretKey());
+            return new UserIsOkResponseDto("OK");
+        }
+        return new UserIsOkResponseDto("NO");
+    }
+     */
+    @Transactional
+    public UserIsOkResponseDto updateInform(String id, UserUpdateInformRequestDto requestDto){
+        User user = userRepository.findByUserId(id);
+        if (user != null){
+            user.updateInform(requestDto.getName(), requestDto.getPassword());
+            return new UserIsOkResponseDto("OK");
+        }
+        return new UserIsOkResponseDto("NO");
+    }
+
+    @Transactional
+    public UserIsOkResponseDto delete(String id){
+        User user = userRepository.findByUserId(id);
+        if (user != null){
+            userRepository.delete(user);
             return new UserIsOkResponseDto("OK");
         }
         return new UserIsOkResponseDto("NO");

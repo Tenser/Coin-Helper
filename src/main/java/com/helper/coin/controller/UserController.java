@@ -48,6 +48,11 @@ public class UserController {
         return userService.updateInform(id, requestDto);
     }
 
+    @DeleteMapping("/user/delete/{id}")
+    public UserIsOkResponseDto delete(@PathVariable String id){
+        return userService.delete(id);
+    }
+
     @GetMapping("/user/findById/{id}")
     public UserResponseDto findById(@PathVariable String id){
         return userService.findById(id);
