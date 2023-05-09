@@ -134,6 +134,11 @@ public class CoinService {
     }
 
     @Transactional
+    public int[] getUnits(){
+        return units;
+    }
+
+    @Transactional
     public List<CoinLikeResponseDto> findAll(){
         List<Coin> coins = coinRepository.findAll();
         List<CoinLikeResponseDto> responseDtos = new ArrayList<>();

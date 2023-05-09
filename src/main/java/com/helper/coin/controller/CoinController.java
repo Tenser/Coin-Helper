@@ -18,6 +18,9 @@ public class CoinController {
 
     private final CoinService coinService;
 
+    @GetMapping("coin/getUnits")
+    public int[] getUnits() { return coinService.getUnits(); }
+
     @GetMapping("/coin/findAll")
     public List<CoinLikeResponseDto> findAll(){
         return coinService.findAll();

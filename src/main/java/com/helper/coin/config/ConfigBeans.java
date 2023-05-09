@@ -25,7 +25,7 @@ public class ConfigBeans {
 
     @Bean(name = "units")
     public int[] units() {
-        int[] units = {5, 30, 60, 120, 240};
+        int[] units = {5, 15, 30, 60, 120, 240};
         return units;
     }
 
